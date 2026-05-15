@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Analisis CV Budi Santoso</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 5; }
+    .topbar-title { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; flex: 1; }
+    .breadcrumb { font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+    .content { padding: 28px; display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
+
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 20px; }
+    .card-title { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+
+    /* CANDIDATE HERO */
+    .candidate-hero {
+      background: linear-gradient(135deg, rgba(92,106,196,0.1) 0%, rgba(124,58,237,0.05) 100%);
+      border: 1px solid rgba(92,106,196,0.2); border-radius: 20px; padding: 28px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 24px;
+    }
+    .candidate-avatar {
+      width: 80px; height: 80px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, #5C6AC4, #7C3AED);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 2rem; font-weight: 700; font-family: 'Outfit', sans-serif;
+      border: 3px solid rgba(92,106,196,0.3);
+    }
+    .candidate-info { flex: 1; }
+    .candidate-name { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 4px; }
+    .candidate-title { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px; }
+    .candidate-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+    .meta-item { display: flex; align-items: center; gap: 6px; font-size: 0.83rem; color: var(--text-muted); }
+    .candidate-actions { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+    .btn { padding: 9px 20px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; white-space: nowrap; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.2); }
+    .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+
+    /* SKILLS */
+    .skills-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .skill-tag {
+      padding: 5px 14px; border-radius: 99px; font-size: 0.8rem; font-weight: 600;
+      background: rgba(92,106,196,0.12); border: 1px solid rgba(92,106,196,0.2); color: #818CF8;
+    }
+    .skill-tag.match { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.2); color: #34D399; }
+    .skill-tag.partial { background: rgba(245,158,11,0.12); border-color: rgba(245,158,11,0.2); color: #FCD34D; }
+    .skill-tag.missing { background: rgba(239,68,68,0.08); border-color: rgba(239,68,68,0.15); color: #FCA5A5; }
+
+    /* EXPERIENCE */
+    .exp-timeline { position: relative; }
+    .exp-item { display: flex; gap: 16px; margin-bottom: 20px; }
+    .exp-item:last-child { margin-bottom: 0; }
+    .exp-dot-wrap { display: flex; flex-direction: column; align-items: center; }
+    .exp-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: 4px; border: 2px solid rgba(92,106,196,0.5); }
+    .exp-line { flex: 1; width: 2px; background: var(--border); margin-top: 4px; }
+    .exp-content { flex: 1; padding-bottom: 4px; }
+    .exp-title { font-weight: 600; font-size: 0.9rem; }
+    .exp-company { color: var(--primary); font-size: 0.85rem; margin-bottom: 2px; }
+    .exp-period { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 6px; }
+    .exp-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* EDUCATION */
+    .edu-item { display: flex; gap: 14px; padding: 14px; background: var(--bg-surface); border-radius: 10px; border: 1px solid var(--border); margin-bottom: 10px; }
+    .edu-icon { font-size: 1.8rem; }
+    .edu-degree { font-weight: 600; font-size: 0.9rem; }
+    .edu-school { color: var(--primary); font-size: 0.85rem; }
+    .edu-year { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* RIGHT PANEL */
+    .right-panel { display: flex; flex-direction: column; gap: 0; }
+
+    /* SCORE RING */
+    .score-card {
+      background: linear-gradient(145deg, #13162A, #1a1d35);
+      border: 1px solid var(--border); border-radius: 20px; padding: 28px; margin-bottom: 20px; text-align: center;
+    }
+    .score-ring-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto 16px; }
+    .score-ring-wrap svg { transform: rotate(-90deg); }
+    .score-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+    .score-num { font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 800; display: block; }
+    .score-label { font-size: 0.75rem; color: var(--text-muted); }
+    .grade-badge { display: inline-block; padding: 5px 16px; border-radius: 99px; font-weight: 700; font-size: 0.9rem; margin-bottom: 12px; }
+    .grade-a { background: rgba(16,185,129,0.15); color: #34D399; border: 1px solid rgba(16,185,129,0.3); }
+    .rec-text { font-size: 0.88rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* CRITERIA BREAKDOWN */
+    .criteria-list { display: flex; flex-direction: column; gap: 14px; }
+    .criteria-row {}
+    .criteria-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .criteria-name { font-size: 0.85rem; font-weight: 500; }
+    .criteria-score-text { font-size: 0.82rem; font-weight: 700; }
+    .criteria-bar { height: 7px; border-radius: 99px; background: var(--bg-surface); overflow: hidden; }
+    .criteria-fill { height: 100%; border-radius: 99px; }
+    .fill-high { background: linear-gradient(90deg, #10B981, #059669); }
+    .fill-mid { background: linear-gradient(90deg, #5C6AC4, #7C3AED); }
+    .fill-low { background: linear-gradient(90deg, #F59E0B, #D97706); }
+    .criteria-weight { font-size: 0.73rem; color: var(--text-muted); margin-top: 3px; }
+
+    /* AI NOTE */
+    .ai-note { background: rgba(92,106,196,0.07); border: 1px solid rgba(92,106,196,0.15); border-radius: 14px; padding: 16px; margin-bottom: 20px; }
+    .ai-note-header { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 700; margin-bottom: 8px; color: #818CF8; }
+    .ai-note-text { font-size: 0.83rem; color: var(--text-muted); line-height: 1.7; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="#" class="nav-item active"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div class="user-name">Aswin Tresna</div><div class="user-role">HR Manager</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1;">
+        <div class="topbar-title">Analisis CV — Budi Santoso</div>
+        <div class="breadcrumb">
+          <a href="02-dashboard.html">Dashboard</a> /
+          <a href="03-upload-cv.html">Upload CV</a> /
+          <span>Budi Santoso</span>
+        </div>
+      </div>
+      <button class="btn btn-outline" style="font-size:0.82rem;">← Kandidat Sebelumnya</button>
+      <button class="btn btn-outline" style="font-size:0.82rem;">Kandidat Berikutnya →</button>
+    </header>
+
+    <div class="content">
+      <!-- LEFT: CV DATA -->
+      <div>
+        <!-- HERO -->
+        <div class="candidate-hero">
+          <div class="candidate-avatar">BS</div>
+          <div class="candidate-info">
+            <div class="candidate-name">Budi Santoso</div>
+            <div class="candidate-title">Frontend Developer · 4 tahun pengalaman</div>
+            <div class="candidate-meta">
+              <div class="meta-item">📧 budi.s@gmail.com</div>
+              <div class="meta-item">📱 +62 812-3456-7890</div>
+              <div class="meta-item">📍 Jakarta Selatan, DKI Jakarta</div>
+              <div class="meta-item">🔗 linkedin.com/in/budisantoso</div>
+            </div>
+          </div>
+          <div class="candidate-actions">
+            <button class="btn btn-primary">Pindah ke Shortlist</button>
+            <button class="btn btn-outline" style="font-size:0.82rem;">📥 Download CV</button>
+            <button class="btn btn-danger" style="font-size:0.82rem;">❌ Tolak</button>
+          </div>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="card">
+          <div class="card-title">🛠️ Skills yang Terdeteksi</div>
+          <div style="margin-bottom:10px;font-size:0.8rem;color:var(--text-muted);">
+            <span style="color:#34D399">●</span> Sesuai posisi &nbsp;
+            <span style="color:#FCD34D">●</span> Sebagian &nbsp;
+            <span style="color:#FCA5A5">●</span> Tidak dimiliki (requirement)
+          </div>
+          <div class="skills-wrap">
+            <span class="skill-tag match">React.js</span>
+            <span class="skill-tag match">TypeScript</span>
+            <span class="skill-tag match">JavaScript</span>
+            <span class="skill-tag match">HTML/CSS</span>
+            <span class="skill-tag match">Git</span>
+            <span class="skill-tag match">REST API</span>
+            <span class="skill-tag match">Figma</span>
+            <span class="skill-tag partial">Next.js</span>
+            <span class="skill-tag partial">Redux</span>
+            <span class="skill-tag partial">GraphQL</span>
+            <span class="skill-tag">Tailwind CSS</span>
+            <span class="skill-tag">Jest/Testing</span>
+            <span class="skill-tag missing">Docker</span>
+            <span class="skill-tag missing">AWS</span>
+          </div>
+        </div>
+
+        <!-- EXPERIENCE -->
+        <div class="card">
+          <div class="card-title">💼 Pengalaman Kerja</div>
+          <div class="exp-timeline">
+            <div class="exp-item">
+              <div class="exp-dot-wrap"><div class="exp-dot"></div><div class="exp-line"></div></div>
+              <div class="exp-content">
+                <div class="exp-title">Senior Frontend Developer</div>
+                <div class="exp-company">PT Tokopedia Indonesia</div>
+                <div class="exp-period">Jan 2023 – Sekarang · 2 tahun 4 bulan</div>
+                <div class="exp-desc">Memimpin pengembangan antarmuka seller dashboard menggunakan React & TypeScript. Meningkatkan performa page load 40% melalui code splitting dan lazy loading.</div>
+              </div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-dot-wrap"><div class="exp-dot" style="background:#7C3AED;"></div><div class="exp-line"></div></div>
+              <div class="exp-content">
+                <div class="exp-title">Frontend Developer</div>
+                <div class="exp-company">Gojek Indonesia</div>
+                <div class="exp-period">Mar 2021 – Dec 2022 · 1 tahun 9 bulan</div>
+                <div class="exp-desc">Berkontribusi dalam pengembangan fitur-fitur GoFood dan GoShop. Implementasi desain UI dari Figma ke komponen React yang reusable.</div>
+              </div>
+            </div>
+            <div class="exp-item">
+              <div class="exp-dot-wrap"><div class="exp-dot" style="background:#10B981;"></div></div>
+              <div class="exp-content">
+                <div class="exp-title">Junior Web Developer</div>
+                <div class="exp-company">Startup XYZ (Freelance)</div>
+                <div class="exp-period">Jun 2020 – Feb 2021 · 8 bulan</div>
+                <div class="exp-desc">Membangun landing page dan dashboard admin menggunakan React dan Vanilla CSS.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EDUCATION -->
+        <div class="card">
+          <div class="card-title">🎓 Pendidikan</div>
+          <div class="edu-item">
+            <div class="edu-icon">🏛️</div>
+            <div>
+              <div class="edu-degree">S1 Ilmu Komputer</div>
+              <div class="edu-school">Universitas Indonesia, Depok</div>
+              <div class="edu-year">2016 – 2020 · IPK: 3.72 / 4.00</div>
+            </div>
+          </div>
+          <div class="edu-item">
+            <div class="edu-icon">📜</div>
+            <div>
+              <div class="edu-degree">Meta Frontend Developer Certificate</div>
+              <div class="edu-school">Coursera / Meta · 2022</div>
+              <div class="edu-year">Terverifikasi</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: SCORE PANEL -->
+      <div class="right-panel">
+        <!-- SCORE -->
+        <div class="score-card">
+          <div class="score-ring-wrap">
+            <svg width="140" height="140" viewBox="0 0 140 140">
+              <circle cx="70" cy="70" r="56" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="12"/>
+              <circle cx="70" cy="70" r="56" fill="none" stroke="url(#scoreGrad)" stroke-width="12"
+                stroke-dasharray="351.9" stroke-dashoffset="31.7" stroke-linecap="round"/>
+              <defs>
+                <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#5C6AC4"/>
+                  <stop offset="100%" stop-color="#10B981"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="score-ring-text">
+              <span class="score-num">92</span>
+              <span class="score-label">/ 100</span>
+            </div>
+          </div>
+          <div class="grade-badge grade-a">⭐ Grade A</div>
+          <div class="rec-text">Kandidat ini <strong style="color:#34D399">Sangat Direkomendasikan</strong> untuk posisi <em>Frontend Developer</em>.</div>
+        </div>
+
+        <!-- AI NOTE -->
+        <div class="ai-note">
+          <div class="ai-note-header">🤖 Catatan AI</div>
+          <div class="ai-note-text">Budi memiliki pengalaman solid di React.js dan TypeScript yang sesuai dengan requirement utama. Track record di perusahaan teknologi besar (Tokopedia, Gojek) menjadi nilai tambah signifikan. Kekurangan minor: belum familiar dengan Docker dan AWS.</div>
+        </div>
+
+        <!-- CRITERIA BREAKDOWN -->
+        <div class="card">
+          <div class="card-title">📊 Breakdown Kriteria</div>
+          <div class="criteria-list">
+            <div class="criteria-row">
+              <div class="criteria-header">
+                <span class="criteria-name">🛠️ Skills Teknis</span>
+                <span class="criteria-score-text" style="color:#34D399">88 / 100</span>
+              </div>
+              <div class="criteria-bar"><div class="criteria-fill fill-high" style="width:88%"></div></div>
+              <div class="criteria-weight">Bobot: 40%</div>
+            </div>
+            <div class="criteria-row">
+              <div class="criteria-header">
+                <span class="criteria-name">⏳ Pengalaman Kerja</span>
+                <span class="criteria-score-text" style="color:#34D399">95 / 100</span>
+              </div>
+              <div class="criteria-bar"><div class="criteria-fill fill-high" style="width:95%"></div></div>
+              <div class="criteria-weight">Bobot: 30%</div>
+            </div>
+            <div class="criteria-row">
+              <div class="criteria-header">
+                <span class="criteria-name">🎓 Pendidikan</span>
+                <span class="criteria-score-text" style="color:#818CF8">90 / 100</span>
+              </div>
+              <div class="criteria-bar"><div class="criteria-fill fill-mid" style="width:90%"></div></div>
+              <div class="criteria-weight">Bobot: 20%</div>
+            </div>
+            <div class="criteria-row">
+              <div class="criteria-header">
+                <span class="criteria-name">📜 Sertifikasi</span>
+                <span class="criteria-score-text" style="color:#FCD34D">75 / 100</span>
+              </div>
+              <div class="criteria-bar"><div class="criteria-fill fill-low" style="width:75%"></div></div>
+              <div class="criteria-weight">Bobot: 10%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACTIONS -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <a href="07-job-detail.html"><button class="btn btn-primary" style="width:100%;padding:13px;">Lihat di Shortlist Posisi →</button></a>
+          <a href="08-candidate-profile.html"><button class="btn btn-outline" style="width:100%;padding:13px;">Profil Kandidat Lengkap</button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

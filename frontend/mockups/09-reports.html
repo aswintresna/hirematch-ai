@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Laporan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 12px; position: sticky; top: 0; z-index: 5; }
+    .btn { padding: 8px 18px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .content { padding: 24px 28px; }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; }
+    .card-title { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-bottom: 20px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+
+    /* STAT */
+    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; position: relative; overflow: hidden; }
+    .stat-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+    .stat-card.blue::after { background: linear-gradient(90deg,#5C6AC4,#7C3AED); }
+    .stat-card.green::after { background: linear-gradient(90deg,#10B981,#059669); }
+    .stat-card.orange::after { background: linear-gradient(90deg,#F59E0B,#D97706); }
+    .stat-card.purple::after { background: linear-gradient(90deg,#7C3AED,#EC4899); }
+    .stat-label { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 8px; }
+    .stat-val { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 4px; }
+    .stat-change { font-size: 0.76rem; color: #34D399; }
+
+    /* FUNNEL */
+    .funnel { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 0; }
+    .funnel-step { display: flex; align-items: center; width: 100%; gap: 12px; }
+    .funnel-bar-wrap { flex: 1; }
+    .funnel-label { font-size: 0.8rem; width: 110px; color: var(--text-muted); text-align: right; flex-shrink: 0; }
+    .funnel-count { font-size: 0.82rem; font-weight: 700; width: 40px; flex-shrink: 0; }
+    .funnel-bar { height: 28px; border-radius: 8px; display: flex; align-items: center; padding-left: 10px; font-size: 0.75rem; font-weight: 600; color: rgba(255,255,255,0.7); }
+    .funnel-pct { font-size: 0.75rem; color: var(--text-muted); width: 40px; flex-shrink: 0; }
+
+    /* BAR CHART MOCK */
+    .bar-chart { display: flex; align-items: flex-end; gap: 14px; height: 140px; padding-bottom: 28px; position: relative; border-bottom: 1px solid var(--border); }
+    .bar-chart-inner { display: flex; align-items: flex-end; gap: 14px; flex: 1; height: 100%; }
+    .bar-col { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; }
+    .bar { width: 100%; border-radius: 6px 6px 0 0; position: relative; min-height: 4px; }
+    .bar-label { font-size: 0.72rem; color: var(--text-muted); position: absolute; bottom: -22px; white-space: nowrap; }
+    .bar-val { font-size: 0.72rem; font-weight: 700; }
+
+    /* DONUT */
+    .donut-legend { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .legend-item { display: flex; align-items: center; gap: 10px; font-size: 0.83rem; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+    .legend-label { flex: 1; color: var(--text-muted); }
+    .legend-val { font-weight: 700; }
+    .legend-pct { color: var(--text-muted); font-size: 0.78rem; }
+
+    /* PAGE HEADER */
+    .page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
+    .page-title { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; }
+    .page-desc { color: var(--text-muted); font-size: 0.87rem; margin-top: 4px; }
+    select { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 13px; color: var(--text); font-size: 0.82rem; font-family: 'Inter', sans-serif; outline: none; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item active"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div class="user-name">Aswin Tresna</div><div class="user-role">HR Manager</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1;font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;">Laporan Rekrutmen</div>
+      <select><option>Mei 2026</option><option>April 2026</option><option>Q1 2026</option></select>
+      <button class="btn btn-outline">📄 Export PDF</button>
+      <button class="btn btn-primary">📊 Export Excel</button>
+    </header>
+
+    <div class="content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Laporan & Analitik 📈</h1>
+          <p class="page-desc">Periode: 1 – 15 Mei 2026 · Semua Departemen</p>
+        </div>
+      </div>
+
+      <!-- STATS -->
+      <div class="grid-4">
+        <div class="stat-card blue"><div class="stat-label">📄 Total CV Diproses</div><div class="stat-val">248</div><div class="stat-change">↑ +18% vs bulan lalu</div></div>
+        <div class="stat-card green"><div class="stat-label">✅ Match Rate AI</div><div class="stat-val">25.8%</div><div class="stat-change">↑ +3.2% vs bulan lalu</div></div>
+        <div class="stat-card orange"><div class="stat-label">⏱️ Rata-rata Time-to-Hire</div><div class="stat-val">14 hari</div><div class="stat-change">↓ -2 hari lebih cepat</div></div>
+        <div class="stat-card purple"><div class="stat-label">⭐ Avg Skor Kandidat</div><div class="stat-val">62.4</div><div class="stat-change">↑ +4.1 vs bulan lalu</div></div>
+      </div>
+
+      <div class="grid-2">
+        <!-- FUNNEL -->
+        <div class="card">
+          <div class="card-title">🔽 Funnel Rekrutmen</div>
+          <div class="funnel">
+            <div class="funnel-step">
+              <div class="funnel-label">CV Masuk</div>
+              <div class="funnel-bar-wrap"><div class="funnel-bar" style="background:linear-gradient(90deg,#5C6AC4,#7C3AED);width:100%">248 pelamar</div></div>
+              <div class="funnel-pct">100%</div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-label">Shortlist AI</div>
+              <div class="funnel-bar-wrap"><div class="funnel-bar" style="background:linear-gradient(90deg,#10B981,#059669);width:65%">64 kandidat</div></div>
+              <div class="funnel-pct">25.8%</div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-label">Review HR</div>
+              <div class="funnel-bar-wrap"><div class="funnel-bar" style="background:linear-gradient(90deg,#F59E0B,#D97706);width:35%">22 kandidat</div></div>
+              <div class="funnel-pct">8.9%</div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-label">Interview</div>
+              <div class="funnel-bar-wrap"><div class="funnel-bar" style="background:linear-gradient(90deg,#06B6D4,#3B82F6);width:15%">8 kandidat</div></div>
+              <div class="funnel-pct">3.2%</div>
+            </div>
+            <div class="funnel-step">
+              <div class="funnel-label">Penawaran</div>
+              <div class="funnel-bar-wrap"><div class="funnel-bar" style="background:linear-gradient(90deg,#7C3AED,#EC4899);width:7%">3 kandidat</div></div>
+              <div class="funnel-pct">1.2%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GRADE DISTRIBUTION -->
+        <div class="card">
+          <div class="card-title">📊 Distribusi Grade Kandidat</div>
+          <div style="display:flex;justify-content:center;margin:10px 0;">
+            <svg width="160" height="160" viewBox="0 0 160 160">
+              <circle cx="80" cy="80" r="60" fill="none" stroke="#1A1E35" stroke-width="24"/>
+              <!-- Grade A: 20% -->
+              <circle cx="80" cy="80" r="60" fill="none" stroke="#10B981" stroke-width="24" stroke-dasharray="75.4 301.6" stroke-dashoffset="0" transform="rotate(-90 80 80)"/>
+              <!-- Grade B: 32% -->
+              <circle cx="80" cy="80" r="60" fill="none" stroke="#5C6AC4" stroke-width="24" stroke-dasharray="120.6 301.6" stroke-dashoffset="-75.4" transform="rotate(-90 80 80)"/>
+              <!-- Grade C: 28% -->
+              <circle cx="80" cy="80" r="60" fill="none" stroke="#F59E0B" stroke-width="24" stroke-dasharray="105.6 301.6" stroke-dashoffset="-196" transform="rotate(-90 80 80)"/>
+              <!-- Grade D: 20% -->
+              <circle cx="80" cy="80" r="60" fill="none" stroke="#EF4444" stroke-width="24" stroke-dasharray="60.4 301.6" stroke-dashoffset="-301.6" transform="rotate(-90 80 80)"/>
+              <text x="80" y="75" text-anchor="middle" fill="#E8EAF6" font-size="14" font-weight="800" font-family="Outfit">248</text>
+              <text x="80" y="92" text-anchor="middle" fill="#7B82A8" font-size="10" font-family="Inter">kandidat</text>
+            </svg>
+          </div>
+          <div class="donut-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#10B981"></div><span class="legend-label">Grade A — Sangat Direkomendasikan</span><span class="legend-val">50</span><span class="legend-pct">20%</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background:#5C6AC4"></div><span class="legend-label">Grade B — Direkomendasikan</span><span class="legend-val">79</span><span class="legend-pct">32%</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background:#F59E0B"></div><span class="legend-label">Grade C — Pertimbangkan</span><span class="legend-val">70</span><span class="legend-pct">28%</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background:#EF4444"></div><span class="legend-label">Grade D — Tidak Sesuai</span><span class="legend-val">49</span><span class="legend-pct">20%</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BAR CHART: CV PER POSISI -->
+      <div class="card">
+        <div class="card-title">📋 Jumlah Pelamar per Posisi</div>
+        <div class="bar-chart">
+          <div class="bar-chart-inner">
+            <div class="bar-col">
+              <div class="bar-val" style="color:#5C6AC4">72</div>
+              <div class="bar" style="height:72%;background:linear-gradient(180deg,#5C6AC4,rgba(92,106,196,0.3))"><span class="bar-label">Frontend Dev</span></div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val" style="color:#10B981">55</div>
+              <div class="bar" style="height:55%;background:linear-gradient(180deg,#10B981,rgba(16,185,129,0.3))"><span class="bar-label">UI/UX Designer</span></div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val" style="color:#F59E0B">45</div>
+              <div class="bar" style="height:45%;background:linear-gradient(180deg,#F59E0B,rgba(245,158,11,0.3))"><span class="bar-label">Data Analyst</span></div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val" style="color:#06B6D4">38</div>
+              <div class="bar" style="height:38%;background:linear-gradient(180deg,#06B6D4,rgba(6,182,212,0.3))"><span class="bar-label">Backend Dev</span></div>
+            </div>
+            <div class="bar-col">
+              <div class="bar-val" style="color:#7C3AED">38</div>
+              <div class="bar" style="height:38%;background:linear-gradient(180deg,#7C3AED,rgba(124,58,237,0.3))"><span class="bar-label">Product Mgr</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

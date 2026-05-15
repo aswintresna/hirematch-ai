@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Daftar Lowongan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 5; }
+    .topbar-title { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; flex: 1; }
+    .btn { padding: 9px 18px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .content { padding: 28px; }
+    .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+    .page-title { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; }
+    .page-desc { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; }
+
+    /* FILTERS */
+    .filters { display: flex; gap: 10px; margin-bottom: 24px; flex-wrap: wrap; align-items: center; }
+    .search-box { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; flex: 1; min-width: 200px; }
+    .search-box input { background: none; border: none; outline: none; color: var(--text); font-size: 0.88rem; width: 100%; font-family: 'Inter', sans-serif; }
+    .search-box input::placeholder { color: var(--text-muted); }
+    select { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; color: var(--text); font-size: 0.85rem; font-family: 'Inter', sans-serif; outline: none; cursor: pointer; }
+    .filter-chips { display: flex; gap: 6px; }
+    .chip { padding: 5px 14px; border-radius: 99px; font-size: 0.78rem; font-weight: 600; border: 1px solid var(--border); cursor: pointer; transition: all 0.2s; color: var(--text-muted); background: var(--bg-card); }
+    .chip.active { background: rgba(92,106,196,0.15); border-color: rgba(92,106,196,0.3); color: #818CF8; }
+    .chip:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
+
+    /* JOB CARDS GRID */
+    .jobs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; }
+    .job-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px; padding: 22px;
+      cursor: pointer; transition: all 0.25s; text-decoration: none; color: inherit; display: block; position: relative; overflow: hidden;
+    }
+    .job-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 18px 18px 0 0; }
+    .job-card.tech::before { background: linear-gradient(90deg, #5C6AC4, #7C3AED); }
+    .job-card.data::before { background: linear-gradient(90deg, #10B981, #059669); }
+    .job-card.design::before { background: linear-gradient(90deg, #F59E0B, #EF4444); }
+    .job-card.product::before { background: linear-gradient(90deg, #06B6D4, #3B82F6); }
+    .job-card:hover { transform: translateY(-3px); border-color: rgba(92,106,196,0.25); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .job-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+    .job-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+    .job-icon.tech { background: rgba(92,106,196,0.15); }
+    .job-icon.data { background: rgba(16,185,129,0.15); }
+    .job-icon.design { background: rgba(245,158,11,0.15); }
+    .job-icon.product { background: rgba(6,182,212,0.15); }
+    .status-dot { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600; }
+    .dot { width: 7px; height: 7px; border-radius: 50%; }
+    .dot-green { background: #10B981; } .dot-orange { background: #F59E0B; } .dot-red { background: #EF4444; }
+    .job-title { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+    .job-dept { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 14px; }
+    .job-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .job-meta-item { display: flex; align-items: center; gap: 5px; font-size: 0.8rem; color: var(--text-muted); }
+    .job-progress-wrap { margin-bottom: 14px; }
+    .job-progress-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.78rem; }
+    .job-progress-label span { color: var(--text-muted); }
+    .job-progress-label strong { color: var(--text); }
+    .job-bar { height: 6px; border-radius: 99px; background: var(--bg-surface); overflow: hidden; }
+    .job-fill { height: 100%; border-radius: 99px; }
+    .fill-tech { background: linear-gradient(90deg, #5C6AC4, #7C3AED); }
+    .fill-data { background: linear-gradient(90deg, #10B981, #059669); }
+    .fill-design { background: linear-gradient(90deg, #F59E0B, #EF4444); }
+    .fill-product { background: linear-gradient(90deg, #06B6D4, #3B82F6); }
+    .job-card-footer { display: flex; align-items: center; justify-content: space-between; }
+    .candidate-avatars { display: flex; }
+    .mini-avatar { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--bg-card); margin-left: -8px; background: linear-gradient(135deg, #5C6AC4, #7C3AED); display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+    .mini-avatar:first-child { margin-left: 0; }
+    .mini-more { background: var(--bg-surface); color: var(--text-muted); font-size: 0.7rem; }
+    .view-btn { font-size: 0.78rem; color: var(--primary); font-weight: 600; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item active"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div class="user-name">Aswin Tresna</div><div class="user-role">HR Manager</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-title" style="flex:1;">Daftar Lowongan</div>
+      <a href="06-job-create.html"><button class="btn btn-primary">+ Buat Lowongan Baru</button></a>
+    </header>
+
+    <div class="content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Lowongan Aktif 💼</h1>
+          <p class="page-desc">7 lowongan aktif · 248 pelamar masuk · Diperbarui hari ini</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline">📊 Tampilan Tabel</button>
+          <button class="btn btn-outline" style="background:rgba(92,106,196,0.1);border-color:rgba(92,106,196,0.3);color:#818CF8;">⊞ Tampilan Kartu</button>
+        </div>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filters">
+        <div class="search-box">
+          <span>🔍</span>
+          <input type="text" placeholder="Cari nama posisi, departemen..." />
+        </div>
+        <select><option>Semua Departemen</option><option>Engineering</option><option>Product</option><option>Design</option></select>
+        <select><option>Semua Status</option><option>Aktif</option><option>Mendekati Deadline</option><option>Tutup</option></select>
+        <div class="filter-chips">
+          <div class="chip active">Semua (7)</div>
+          <div class="chip">Aktif (5)</div>
+          <div class="chip">Hampir Tutup (3)</div>
+        </div>
+      </div>
+
+      <!-- GRID -->
+      <div class="jobs-grid">
+        <a href="07-job-detail.html" class="job-card tech">
+          <div class="job-card-header">
+            <div class="job-icon tech">⚛️</div>
+            <div class="status-dot"><div class="dot dot-green"></div><span style="color:#34D399">Aktif</span></div>
+          </div>
+          <div class="job-title">Frontend Developer (React)</div>
+          <div class="job-dept">Engineering · 5 posisi tersedia</div>
+          <div class="job-meta">
+            <div class="job-meta-item">📍 Jakarta / Remote</div>
+            <div class="job-meta-item">💰 Rp 10-18 jt/bulan</div>
+            <div class="job-meta-item">📅 Tutup: 30 Mei 2026</div>
+          </div>
+          <div class="job-progress-wrap">
+            <div class="job-progress-label"><span>72 pelamar · 18 shortlist</span><strong>25% terisi</strong></div>
+            <div class="job-bar"><div class="job-fill fill-tech" style="width:25%"></div></div>
+          </div>
+          <div class="job-card-footer">
+            <div class="candidate-avatars">
+              <div class="mini-avatar">BS</div>
+              <div class="mini-avatar">SA</div>
+              <div class="mini-avatar">DR</div>
+              <div class="mini-avatar mini-more">+15</div>
+            </div>
+            <span class="view-btn">Lihat detail →</span>
+          </div>
+        </a>
+
+        <a href="07-job-detail.html" class="job-card data">
+          <div class="job-card-header">
+            <div class="job-icon data">📊</div>
+            <div class="status-dot"><div class="dot dot-orange"></div><span style="color:#FCD34D">Mendekati Deadline</span></div>
+          </div>
+          <div class="job-title">Data Analyst</div>
+          <div class="job-dept">Data & Analytics · 2 posisi</div>
+          <div class="job-meta">
+            <div class="job-meta-item">📍 Jakarta</div>
+            <div class="job-meta-item">💰 Rp 8-14 jt/bulan</div>
+            <div class="job-meta-item">📅 Tutup: 18 Mei 2026</div>
+          </div>
+          <div class="job-progress-wrap">
+            <div class="job-progress-label"><span>45 pelamar · 11 shortlist</span><strong>50% terisi</strong></div>
+            <div class="job-bar"><div class="job-fill fill-data" style="width:50%"></div></div>
+          </div>
+          <div class="job-card-footer">
+            <div class="candidate-avatars">
+              <div class="mini-avatar" style="background:linear-gradient(135deg,#10B981,#059669)">AF</div>
+              <div class="mini-avatar" style="background:linear-gradient(135deg,#10B981,#059669)">RH</div>
+              <div class="mini-avatar mini-more">+9</div>
+            </div>
+            <span class="view-btn">Lihat detail →</span>
+          </div>
+        </a>
+
+        <a href="07-job-detail.html" class="job-card product">
+          <div class="job-card-header">
+            <div class="job-icon product">🎯</div>
+            <div class="status-dot"><div class="dot dot-green"></div><span style="color:#34D399">Aktif</span></div>
+          </div>
+          <div class="job-title">Product Manager</div>
+          <div class="job-dept">Product · 3 posisi</div>
+          <div class="job-meta">
+            <div class="job-meta-item">📍 Jakarta / Hybrid</div>
+            <div class="job-meta-item">💰 Rp 15-25 jt/bulan</div>
+            <div class="job-meta-item">📅 Tutup: 10 Jun 2026</div>
+          </div>
+          <div class="job-progress-wrap">
+            <div class="job-progress-label"><span>38 pelamar · 9 shortlist</span><strong>0% terisi</strong></div>
+            <div class="job-bar"><div class="job-fill fill-product" style="width:5%"></div></div>
+          </div>
+          <div class="job-card-footer">
+            <div class="candidate-avatars">
+              <div class="mini-avatar" style="background:linear-gradient(135deg,#06B6D4,#3B82F6)">DR</div>
+              <div class="mini-avatar mini-more">+8</div>
+            </div>
+            <span class="view-btn">Lihat detail →</span>
+          </div>
+        </a>
+
+        <a href="07-job-detail.html" class="job-card design">
+          <div class="job-card-header">
+            <div class="job-icon design">🎨</div>
+            <div class="status-dot"><div class="dot dot-green"></div><span style="color:#34D399">Aktif</span></div>
+          </div>
+          <div class="job-title">UI/UX Designer</div>
+          <div class="job-dept">Design · 2 posisi</div>
+          <div class="job-meta">
+            <div class="job-meta-item">📍 Remote</div>
+            <div class="job-meta-item">💰 Rp 8-15 jt/bulan</div>
+            <div class="job-meta-item">📅 Tutup: 25 Mei 2026</div>
+          </div>
+          <div class="job-progress-wrap">
+            <div class="job-progress-label"><span>55 pelamar · 7 shortlist</span><strong>0% terisi</strong></div>
+            <div class="job-bar"><div class="job-fill fill-design" style="width:0%"></div></div>
+          </div>
+          <div class="job-card-footer">
+            <div class="candidate-avatars">
+              <div class="mini-avatar" style="background:linear-gradient(135deg,#F59E0B,#EF4444)">RH</div>
+              <div class="mini-avatar mini-more">+6</div>
+            </div>
+            <span class="view-btn">Lihat detail →</span>
+          </div>
+        </a>
+
+        <a href="07-job-detail.html" class="job-card tech">
+          <div class="job-card-header">
+            <div class="job-icon tech">⚙️</div>
+            <div class="status-dot"><div class="dot dot-green"></div><span style="color:#34D399">Aktif</span></div>
+          </div>
+          <div class="job-title">Backend Developer (Node.js)</div>
+          <div class="job-dept">Engineering · 3 posisi</div>
+          <div class="job-meta">
+            <div class="job-meta-item">📍 Jakarta</div>
+            <div class="job-meta-item">💰 Rp 12-20 jt/bulan</div>
+            <div class="job-meta-item">📅 Tutup: 5 Jun 2026</div>
+          </div>
+          <div class="job-progress-wrap">
+            <div class="job-progress-label"><span>38 pelamar · 12 shortlist</span><strong>33% terisi</strong></div>
+            <div class="job-bar"><div class="job-fill fill-tech" style="width:33%"></div></div>
+          </div>
+          <div class="job-card-footer">
+            <div class="candidate-avatars">
+              <div class="mini-avatar">SA</div>
+              <div class="mini-avatar mini-more">+11</div>
+            </div>
+            <span class="view-btn">Lihat detail →</span>
+          </div>
+        </a>
+
+        <!-- ADD NEW CARD -->
+        <a href="06-job-create.html" class="job-card" style="border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:220px;text-align:center;gap:12px;">
+          <div style="font-size:2.5rem;">➕</div>
+          <div style="font-family:'Outfit',sans-serif;font-weight:700;font-size:1rem;">Buat Lowongan Baru</div>
+          <div style="font-size:0.82rem;color:var(--text-muted);">Tambah posisi baru dan atur kriteria seleksi</div>
+        </a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
