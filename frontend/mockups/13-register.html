@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Daftar Perusahaan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --primary: #5C6AC4; --accent: #10B981; --bg: #0D0F17; --bg-card: #13162A; --bg-input: #1A1E35; --border: rgba(255,255,255,0.08); --text: #E8EAF6; --text-muted: #7B82A8; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: grid; grid-template-columns: 1fr 520px; }
+    .left-panel { background: linear-gradient(145deg, #0D0F17, #131830); display: flex; flex-direction: column; padding: 60px; position: relative; overflow: hidden; }
+    .left-panel::before { content: ''; position: absolute; top: -200px; left: -100px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(92,106,196,0.15) 0%, transparent 70%); pointer-events: none; }
+    .logo { display: flex; align-items: center; gap: 12px; margin-bottom: auto; }
+    .logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; background: linear-gradient(135deg, #fff, #9ca3e8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-content { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 20px; }
+    .hero-title { font-family: 'Outfit', sans-serif; font-size: 2.5rem; font-weight: 800; line-height: 1.2; color: #fff; }
+    .hero-title span { background: linear-gradient(135deg, #5C6AC4, #10B981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-desc { color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; max-width: 380px; }
+    .steps { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+    .step { display: flex; align-items: center; gap: 14px; }
+    .step-num { width: 32px; height: 32px; border-radius: 50%; background: rgba(92,106,196,0.15); border: 1px solid rgba(92,106,196,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; color: #818CF8; flex-shrink: 0; }
+    .step-text { font-size: 0.88rem; color: var(--text-muted); }
+    .step-text strong { color: var(--text); }
+    .right-panel { background: var(--bg-card); border-left: 1px solid var(--border); display: flex; flex-direction: column; justify-content: center; padding: 48px 44px; overflow-y: auto; }
+    .form-title { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 6px; }
+    .form-subtitle { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 28px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 0.81rem; font-weight: 500; color: var(--text-muted); margin-bottom: 7px; }
+    input, select { width: 100%; background: var(--bg-input); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
+    input:focus, select:focus { border-color: rgba(92,106,196,0.5); box-shadow: 0 0 0 3px rgba(92,106,196,0.08); }
+    input::placeholder { color: var(--text-muted); }
+    .divider { display: flex; align-items: center; gap: 10px; margin: 8px 0 16px; color: var(--text-muted); font-size: 0.78rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .terms { font-size: 0.78rem; color: var(--text-muted); margin: 14px 0; line-height: 1.6; }
+    .terms a { color: var(--primary); text-decoration: none; }
+    .btn { width: 100%; padding: 13px; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.25s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; box-shadow: 0 4px 20px rgba(92,106,196,0.3); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(92,106,196,0.4); }
+    .form-footer { margin-top: 20px; text-align: center; font-size: 0.84rem; color: var(--text-muted); }
+    .form-footer a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    .section-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 14px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="left-panel">
+    <div class="logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <div class="hero-content">
+      <h1 class="hero-title">Mulai Rekrut dengan<br/><span>Lebih Cerdas</span></h1>
+      <p class="hero-desc">Daftarkan perusahaan Anda dan mulai proses rekrutmen berbasis AI dalam hitungan menit.</p>
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div class="step-text"><strong>Isi profil perusahaan</strong> — nama, industri, ukuran</div></div>
+        <div class="step"><div class="step-num">2</div><div class="step-text"><strong>Buat lowongan pertama</strong> — dengan criteria builder</div></div>
+        <div class="step"><div class="step-num">3</div><div class="step-text"><strong>Upload CV pelamar</strong> — AI langsung parsing & scoring</div></div>
+        <div class="step"><div class="step-num">4</div><div class="step-text"><strong>Terima shortlist</strong> — kandidat terbaik dalam hitungan jam</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="right-panel">
+    <div class="form-title">Daftar Perusahaan 🏢</div>
+    <div class="form-subtitle">Buat akun HireMatch AI untuk tim HR Anda</div>
+    <div class="section-label">Informasi Perusahaan</div>
+    <div class="form-group"><label>Nama Perusahaan</label><input type="text" placeholder="cth: PT Maju Bersama Indonesia" /></div>
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0"><label>Industri</label><select><option>Teknologi & IT</option><option>Manufaktur</option><option>Keuangan</option><option>Retail</option><option>Lainnya</option></select></div>
+      <div class="form-group" style="margin-bottom:0"><label>Jumlah Karyawan</label><select><option>1–10</option><option>11–50</option><option>51–200</option><option>200+</option></select></div>
+    </div>
+    <div class="divider">Akun HR Admin</div>
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0"><label>Nama Lengkap</label><input type="text" placeholder="Nama HR Manager" /></div>
+      <div class="form-group" style="margin-bottom:0"><label>Jabatan</label><input type="text" placeholder="HR Manager" /></div>
+    </div>
+    <div class="form-group" style="margin-top:14px;"><label>Email Perusahaan</label><input type="email" placeholder="hr@perusahaan.com" /></div>
+    <div class="form-row">
+      <div class="form-group" style="margin-bottom:0"><label>Kata Sandi</label><input type="password" placeholder="Min. 8 karakter" /></div>
+      <div class="form-group" style="margin-bottom:0"><label>Konfirmasi Sandi</label><input type="password" placeholder="Ulangi kata sandi" /></div>
+    </div>
+    <div class="terms">Dengan mendaftar, Anda menyetujui <a href="#">Syarat & Ketentuan</a> dan <a href="#">Kebijakan Privasi</a> HireMatch AI.</div>
+    <a href="20-onboarding.html"><button class="btn btn-primary">Buat Akun & Mulai Gratis →</button></a>
+    <div class="form-footer">Sudah punya akun? <a href="01-login.html">Masuk di sini →</a></div>
+  </div>
+</body>
+</html>

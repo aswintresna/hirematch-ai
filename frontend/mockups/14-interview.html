@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Jadwalkan Interview</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --primary: #5C6AC4; --accent: #10B981; --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35; --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8; --sidebar-w: 240px; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 12px; position: sticky; top: 0; z-index: 5; }
+    .btn { padding: 9px 20px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; box-shadow: 0 4px 16px rgba(92,106,196,0.25); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-accent { background: linear-gradient(135deg, #10B981, #059669); color: #fff; }
+    .content { padding: 28px; display: grid; grid-template-columns: 1fr 340px; gap: 24px; }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 20px; }
+    .card-title { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 18px; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 0.81rem; font-weight: 500; color: var(--text-muted); margin-bottom: 7px; }
+    input, select, textarea { width: 100%; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
+    input:focus, select:focus, textarea:focus { border-color: rgba(92,106,196,0.5); }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    /* CANDIDATE CARD */
+    .cand-preview { display: flex; align-items: center; gap: 14px; padding: 16px; background: linear-gradient(135deg, rgba(92,106,196,0.08), rgba(124,58,237,0.04)); border: 1px solid rgba(92,106,196,0.18); border-radius: 14px; margin-bottom: 20px; }
+    .cand-av { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg,#5C6AC4,#7C3AED); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
+    .cand-name { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; }
+    .cand-meta { font-size: 0.82rem; color: var(--text-muted); margin-top: 2px; }
+    .grade-pill { margin-left: auto; padding: 5px 14px; border-radius: 99px; font-size: 0.8rem; font-weight: 700; background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.2); }
+    /* CALENDAR */
+    .calendar { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; margin-bottom: 20px; }
+    .cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .cal-month { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; }
+    .cal-nav { display: flex; gap: 8px; }
+    .cal-btn { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; font-size: 12px; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    .cal-day-header { text-align: center; font-size: 0.7rem; font-weight: 600; color: var(--text-muted); padding: 4px 0; }
+    .cal-day { text-align: center; padding: 7px 4px; border-radius: 8px; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; }
+    .cal-day:hover { background: rgba(92,106,196,0.15); }
+    .cal-day.today { background: rgba(92,106,196,0.2); color: #818CF8; font-weight: 600; }
+    .cal-day.selected { background: var(--primary); color: #fff; font-weight: 700; }
+    .cal-day.has-event { position: relative; }
+    .cal-day.has-event::after { content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+    .cal-day.empty { cursor: default; }
+    .cal-day.past { color: rgba(255,255,255,0.2); cursor: default; }
+    /* TIME SLOTS */
+    .time-slots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 20px; }
+    .time-slot { padding: 9px; border-radius: 9px; border: 1px solid var(--border); background: var(--bg-surface); text-align: center; font-size: 0.82rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .time-slot:hover { border-color: rgba(92,106,196,0.4); color: var(--primary); }
+    .time-slot.selected { background: rgba(92,106,196,0.15); border-color: rgba(92,106,196,0.4); color: #818CF8; font-weight: 600; }
+    .time-slot.booked { background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.15); color: rgba(255,255,255,0.25); cursor: not-allowed; }
+    /* SCHEDULED LIST */
+    .interview-list { display: flex; flex-direction: column; gap: 10px; }
+    .interview-item { padding: 14px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; }
+    .interview-item-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .interview-name { font-weight: 600; font-size: 0.87rem; }
+    .interview-badge { padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 600; background: rgba(16,185,129,0.1); color: #34D399; }
+    .interview-meta { font-size: 0.78rem; color: var(--text-muted); display: flex; gap: 12px; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item active"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div style="font-size:0.85rem;font-weight:600;">Aswin Tresna</div><div style="font-size:0.75rem;color:var(--text-muted);">HR Manager</div></div></div></div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1;font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;">Jadwalkan Interview</div>
+      <button class="btn btn-outline">← Kembali ke Profil</button>
+      <button class="btn btn-accent">✅ Konfirmasi Jadwal</button>
+    </header>
+    <div class="content">
+      <!-- LEFT -->
+      <div>
+        <div class="cand-preview">
+          <div class="cand-av">BS</div>
+          <div>
+            <div class="cand-name">Budi Santoso</div>
+            <div class="cand-meta">Frontend Developer · Skor 92/100 · budi.s@gmail.com</div>
+          </div>
+          <span class="grade-pill">⭐ Grade A</span>
+        </div>
+        <div class="card">
+          <div class="card-title">📋 Detail Interview</div>
+          <div class="form-group"><label>Posisi yang Dilamar</label><select><option selected>Frontend Developer (React.js)</option></select></div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0"><label>Tipe Interview</label><select><option>Video Call (Zoom)</option><option>Google Meet</option><option>Tatap Muka</option><option>Telepon</option></select></div>
+            <div class="form-group" style="margin-bottom:0"><label>Durasi</label><select><option>30 menit</option><option selected>60 menit</option><option>90 menit</option></select></div>
+          </div>
+          <div class="form-group" style="margin-top:14px;"><label>Pewawancara (Interviewer)</label><input type="text" value="Aswin Tresna (HR Manager)" /></div>
+          <div class="form-group"><label>Link Meeting / Lokasi</label><input type="text" placeholder="cth: https://zoom.us/j/xxx atau Ruang Meeting A" /></div>
+          <div class="form-group"><label>Catatan untuk Kandidat</label><textarea placeholder="Informasi tambahan yang perlu diketahui kandidat...">Selamat! Anda lolos ke tahap interview. Mohon hadir tepat waktu dan siapkan portofolio project terbaru Anda.</textarea></div>
+          <div class="form-group" style="margin-bottom:0;"><label>Kirim Undangan via</label>
+            <div style="display:flex;gap:10px;margin-top:4px;">
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.85rem;color:var(--text);font-weight:400;"><input type="checkbox" checked style="accent-color:var(--primary);width:15px;height:15px;" /> Email</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:0.85rem;color:var(--text);font-weight:400;"><input type="checkbox" style="accent-color:var(--primary);width:15px;height:15px;" /> WhatsApp</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- RIGHT -->
+      <div>
+        <div class="card">
+          <div class="card-title">📅 Pilih Tanggal</div>
+          <div class="calendar">
+            <div class="cal-header">
+              <span class="cal-month">Mei 2026</span>
+              <div class="cal-nav"><button class="cal-btn">‹</button><button class="cal-btn">›</button></div>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-day-header">Min</div><div class="cal-day-header">Sen</div><div class="cal-day-header">Sel</div><div class="cal-day-header">Rab</div><div class="cal-day-header">Kam</div><div class="cal-day-header">Jum</div><div class="cal-day-header">Sab</div>
+              <div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day empty"></div><div class="cal-day past">1</div><div class="cal-day past">2</div><div class="cal-day past">3</div><div class="cal-day past">4</div>
+              <div class="cal-day past">5</div><div class="cal-day past">6</div><div class="cal-day past">7</div><div class="cal-day past">8</div><div class="cal-day past">9</div><div class="cal-day past">10</div><div class="cal-day past">11</div>
+              <div class="cal-day past">12</div><div class="cal-day past">13</div><div class="cal-day past">14</div><div class="cal-day today">15</div><div class="cal-day has-event">16</div><div class="cal-day">17</div><div class="cal-day">18</div>
+              <div class="cal-day">19</div><div class="cal-day selected">20</div><div class="cal-day">21</div><div class="cal-day has-event">22</div><div class="cal-day">23</div><div class="cal-day">24</div><div class="cal-day">25</div>
+              <div class="cal-day">26</div><div class="cal-day">27</div><div class="cal-day">28</div><div class="cal-day">29</div><div class="cal-day">30</div><div class="cal-day">31</div>
+            </div>
+          </div>
+          <div class="card-title" style="margin-bottom:12px;">⏰ Pilih Waktu — Rabu, 20 Mei</div>
+          <div class="time-slots">
+            <div class="time-slot past" style="color:rgba(255,255,255,0.2);cursor:not-allowed;">09:00</div>
+            <div class="time-slot booked">10:00 🔒</div>
+            <div class="time-slot">11:00</div>
+            <div class="time-slot selected">13:00 ✓</div>
+            <div class="time-slot">14:00</div>
+            <div class="time-slot">15:00</div>
+            <div class="time-slot booked">16:00 🔒</div>
+            <div class="time-slot">16:30</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">🗓️ Interview Terjadwal</div>
+          <div class="interview-list">
+            <div class="interview-item">
+              <div class="interview-item-header"><span class="interview-name">Siti Aminah</span><span class="interview-badge">Hari ini 13:00</span></div>
+              <div class="interview-meta"><span>💼 Backend Dev</span><span>📹 Zoom</span><span>60 menit</span></div>
+            </div>
+            <div class="interview-item">
+              <div class="interview-item-header"><span class="interview-name">Muhammad Rizki</span><span style="font-size:0.75rem;color:var(--text-muted);">22 Mei · 10:00</span></div>
+              <div class="interview-meta"><span>💼 Frontend Dev</span><span>📹 Google Meet</span><span>60 menit</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

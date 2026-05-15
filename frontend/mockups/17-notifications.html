@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Notifikasi</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --primary: #5C6AC4; --accent: #10B981; --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35; --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8; --sidebar-w: 240px; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 12px; position: sticky; top: 0; z-index: 5; }
+    .btn { padding: 8px 18px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .content { padding: 28px; max-width: 760px; }
+    .page-title { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; }
+    .page-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 24px; }
+    .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .tab { padding: 10px 16px; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.2s; }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+    .notif-group-label { font-size: 0.75rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; margin-top: 20px; }
+    .notif-item { display: flex; gap: 14px; padding: 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 8px; position: relative; transition: all 0.2s; cursor: pointer; }
+    .notif-item:hover { border-color: rgba(92,106,196,0.2); }
+    .notif-item.unread { border-left: 3px solid var(--primary); background: linear-gradient(135deg, rgba(92,106,196,0.05), transparent); }
+    .notif-item.unread-green { border-left: 3px solid var(--accent); background: linear-gradient(135deg, rgba(16,185,129,0.05), transparent); }
+    .notif-item.unread-orange { border-left: 3px solid #F59E0B; background: linear-gradient(135deg, rgba(245,158,11,0.05), transparent); }
+    .notif-icon { width: 40px; height: 40px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .notif-body { flex: 1; }
+    .notif-title { font-size: 0.88rem; font-weight: 600; margin-bottom: 4px; }
+    .notif-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+    .notif-desc strong { color: var(--text); }
+    .notif-time { font-size: 0.74rem; color: var(--text-muted); margin-top: 6px; }
+    .notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); flex-shrink: 0; margin-top: 6px; }
+    .notif-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .notif-btn { padding: 4px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; }
+    .notif-btn.primary { background: rgba(92,106,196,0.12); color: #818CF8; border-color: rgba(92,106,196,0.2); }
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+    .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="17-notifications.html" class="nav-item active"><span class="icon">🔔</span> Notifikasi <span class="nav-badge" style="background:#EF4444;">5</span></a>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div style="font-size:0.85rem;font-weight:600;">Aswin Tresna</div><div style="font-size:0.75rem;color:var(--text-muted);">HR Manager</div></div></div></div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1;font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;">Notifikasi 🔔</div>
+      <button class="btn btn-outline">✓ Tandai Semua Dibaca</button>
+      <button class="btn btn-outline">🗑️ Hapus Semua</button>
+    </header>
+    <div class="content">
+      <h1 class="page-title">Pusat Notifikasi</h1>
+      <p class="page-desc">5 notifikasi belum dibaca</p>
+      <div class="tabs">
+        <div class="tab active">Semua (12)</div>
+        <div class="tab">Belum Dibaca (5)</div>
+        <div class="tab">AI Matching</div>
+        <div class="tab">Interview</div>
+        <div class="tab">Sistem</div>
+      </div>
+
+      <div class="notif-group-label">Hari Ini</div>
+
+      <div class="notif-item unread-green">
+        <div class="notif-icon" style="background:rgba(16,185,129,0.12);">⭐</div>
+        <div class="notif-body">
+          <div class="notif-title">Kandidat Grade A Baru Ditemukan!</div>
+          <div class="notif-desc">AI menemukan <strong>Budi Santoso</strong> dengan skor <strong>92/100</strong> sangat cocok untuk posisi <strong>Frontend Developer (React.js)</strong>.</div>
+          <div class="notif-actions"><button class="notif-btn primary">Lihat Profil</button><button class="notif-btn">Abaikan</button></div>
+          <div class="notif-time">🕐 10 menit lalu</div>
+        </div>
+        <div class="notif-dot" style="background:#10B981"></div>
+      </div>
+
+      <div class="notif-item unread">
+        <div class="notif-icon" style="background:rgba(92,106,196,0.12);">🤖</div>
+        <div class="notif-body">
+          <div class="notif-title">Matching Selesai — 72 CV Diproses</div>
+          <div class="notif-desc">AI telah menyelesaikan matching untuk posisi <strong>Frontend Developer</strong>. Ditemukan <strong>18 kandidat</strong> yang memenuhi kriteria.</div>
+          <div class="notif-actions"><button class="notif-btn primary">Lihat Hasil</button></div>
+          <div class="notif-time">🕐 45 menit lalu</div>
+        </div>
+        <div class="notif-dot"></div>
+      </div>
+
+      <div class="notif-item unread-orange">
+        <div class="notif-icon" style="background:rgba(245,158,11,0.12);">🗓️</div>
+        <div class="notif-body">
+          <div class="notif-title">Pengingat Interview — 2 Jam Lagi</div>
+          <div class="notif-desc">Interview dengan <strong>Siti Aminah</strong> dijadwalkan pukul <strong>13:00</strong> via Zoom. Pastikan link sudah dikirim ke kandidat.</div>
+          <div class="notif-actions"><button class="notif-btn primary">Buka Detail</button><button class="notif-btn">Kirim Ulang Link</button></div>
+          <div class="notif-time">🕐 1 jam lalu</div>
+        </div>
+        <div class="notif-dot" style="background:#F59E0B"></div>
+      </div>
+
+      <div class="notif-group-label">Kemarin</div>
+
+      <div class="notif-item unread">
+        <div class="notif-icon" style="background:rgba(239,68,68,0.08);">⚠️</div>
+        <div class="notif-body">
+          <div class="notif-title">Deadline Lowongan Mendekat</div>
+          <div class="notif-desc">Lowongan <strong>Data Analyst</strong> akan berakhir dalam <strong>3 hari</strong> (18 Mei 2026). Saat ini baru ada 5 kandidat shortlist.</div>
+          <div class="notif-actions"><button class="notif-btn primary">Buka Lowongan</button></div>
+          <div class="notif-time">🕐 Kemarin, 15:30</div>
+        </div>
+        <div class="notif-dot" style="background:#EF4444"></div>
+      </div>
+
+      <div class="notif-item unread">
+        <div class="notif-icon" style="background:rgba(16,185,129,0.1);">📄</div>
+        <div class="notif-body">
+          <div class="notif-title">Upload CV Batch Selesai</div>
+          <div class="notif-desc"><strong>24 CV</strong> berhasil diproses. <strong>3 CV</strong> gagal karena format tidak didukung. Klik untuk melihat detail.</div>
+          <div class="notif-actions"><button class="notif-btn primary">Lihat Hasil</button></div>
+          <div class="notif-time">🕐 Kemarin, 09:12</div>
+        </div>
+        <div class="notif-dot" style="background:#10B981"></div>
+      </div>
+
+      <div class="notif-group-label">Minggu Ini</div>
+
+      <div class="notif-item">
+        <div class="notif-icon" style="background:rgba(92,106,196,0.1);">👥</div>
+        <div class="notif-body">
+          <div class="notif-title">Rina Astuti bergabung sebagai HR Manager</div>
+          <div class="notif-desc">Pengguna baru <strong>rina@majubersama.co.id</strong> telah menerima undangan dan bergabung ke tim HireMatch Anda.</div>
+          <div class="notif-time">🕐 3 hari lalu</div>
+        </div>
+      </div>
+
+      <div class="notif-item">
+        <div class="notif-icon" style="background:rgba(245,158,11,0.1);">🎉</div>
+        <div class="notif-body">
+          <div class="notif-title">Kandidat Menerima Tawaran!</div>
+          <div class="notif-desc"><strong>Dewi Rahayu</strong> telah menerima tawaran untuk posisi <strong>UI/UX Designer</strong>. Proses rekrutmen selesai!</div>
+          <div class="notif-time">🕐 5 hari lalu</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

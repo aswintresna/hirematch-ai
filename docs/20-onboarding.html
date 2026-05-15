@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Onboarding</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --primary: #5C6AC4; --accent: #10B981; --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35; --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
+    .onboarding-header { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; gap: 20px; }
+    .logo { display: flex; align-items: center; gap: 10px; }
+    .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; }
+    .progress-bar-wrap { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+    .progress-label { font-size: 0.75rem; color: var(--text-muted); text-align: right; }
+    .progress-track { height: 6px; background: var(--bg-surface); border-radius: 99px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--primary), var(--accent)); width: 25%; transition: width 0.5s ease; }
+    .skip-btn { font-size: 0.82rem; color: var(--text-muted); cursor: pointer; text-decoration: none; }
+    .main { flex: 1; display: flex; }
+    /* STEPS SIDEBAR */
+    .steps-sidebar { width: 260px; background: var(--bg-card); border-right: 1px solid var(--border); padding: 32px 20px; display: flex; flex-direction: column; gap: 6px; }
+    .step-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 12px; }
+    .step-item.active { background: rgba(92,106,196,0.1); }
+    .step-num { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 700; flex-shrink: 0; border: 2px solid var(--border); color: var(--text-muted); }
+    .step-item.active .step-num { background: linear-gradient(135deg, var(--primary), #7C3AED); border-color: transparent; color: #fff; }
+    .step-item.done .step-num { background: rgba(16,185,129,0.15); border-color: rgba(16,185,129,0.3); color: #34D399; }
+    .step-info .step-title { font-size: 0.87rem; font-weight: 600; }
+    .step-info .step-title.muted { color: var(--text-muted); font-weight: 500; }
+    .step-info .step-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+    .step-connector { width: 2px; height: 16px; background: var(--border); margin-left: 29px; }
+    /* CONTENT */
+    .onboarding-content { flex: 1; padding: 48px; display: flex; flex-direction: column; max-width: 640px; }
+    .step-badge { font-size: 0.78rem; font-weight: 600; color: var(--primary); background: rgba(92,106,196,0.1); border: 1px solid rgba(92,106,196,0.2); padding: 4px 12px; border-radius: 99px; display: inline-block; margin-bottom: 14px; }
+    .step-main-title { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+    .step-main-desc { color: var(--text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 32px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 0.81rem; font-weight: 500; color: var(--text-muted); margin-bottom: 7px; }
+    input, select, textarea { width: 100%; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; color: var(--text); font-size: 0.88rem; font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s; }
+    input:focus, select:focus { border-color: rgba(92,106,196,0.5); box-shadow: 0 0 0 3px rgba(92,106,196,0.08); }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .logo-upload { display: flex; align-items: center; gap: 16px; }
+    .logo-preview { width: 72px; height: 72px; border-radius: 16px; background: linear-gradient(135deg, var(--primary), #7C3AED); display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
+    .btn-upload { padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text); font-size: 0.83rem; font-weight: 500; cursor: pointer; }
+    .footer { margin-top: auto; display: flex; align-items: center; justify-content: space-between; padding-top: 28px; border-top: 1px solid var(--border); }
+    .btn-nav { padding: 11px 28px; border-radius: 10px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-back { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-next { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; box-shadow: 0 4px 16px rgba(92,106,196,0.25); }
+  </style>
+</head>
+<body>
+  <header class="onboarding-header">
+    <div class="logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <div class="progress-bar-wrap">
+      <div class="progress-label">Langkah 1 dari 4</div>
+      <div class="progress-track"><div class="progress-fill" style="width:25%"></div></div>
+    </div>
+    <a href="02-dashboard.html" class="skip-btn">Lewati →</a>
+  </header>
+  <div class="main">
+    <aside class="steps-sidebar">
+      <div class="step-item active">
+        <div class="step-num">1</div>
+        <div class="step-info"><div class="step-title">Profil Perusahaan</div><div class="step-desc">Nama, industri, logo</div></div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div class="step-info"><div class="step-title muted">Undang Tim HR</div><div class="step-desc">Tambah anggota tim</div></div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div class="step-info"><div class="step-title muted">Buat Lowongan Pertama</div><div class="step-desc">Posisi & kriteria</div></div>
+      </div>
+      <div class="step-connector"></div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div class="step-info"><div class="step-title muted">Upload CV Pertama</div><div class="step-desc">Mulai proses AI</div></div>
+      </div>
+    </aside>
+    <div class="onboarding-content">
+      <span class="step-badge">Langkah 1 dari 4</span>
+      <h1 class="step-main-title">Perkenalkan perusahaan Anda 🏢</h1>
+      <p class="step-main-desc">Informasi ini akan digunakan AI untuk mengkalibrasi rekomendasi yang relevan dengan industri dan skala perusahaan Anda.</p>
+      <div class="form-group">
+        <label>Logo Perusahaan</label>
+        <div class="logo-upload">
+          <div class="logo-preview">🏛️</div>
+          <div><button class="btn-upload">Upload Logo</button><div style="font-size:0.78rem;color:var(--text-muted);margin-top:6px;">PNG/JPG · Maks 2MB · 200×200px</div></div>
+        </div>
+      </div>
+      <div class="form-group"><label>Nama Perusahaan</label><input type="text" value="PT Maju Bersama Indonesia" /></div>
+      <div class="form-row">
+        <div class="form-group" style="margin-bottom:0"><label>Industri</label><select><option selected>Teknologi & IT</option><option>Manufaktur</option><option>Keuangan</option><option>Retail</option></select></div>
+        <div class="form-group" style="margin-bottom:0"><label>Jumlah Karyawan</label><select><option>1–10</option><option>11–50</option><option selected>51–200</option><option>200+</option></select></div>
+      </div>
+      <div class="form-group" style="margin-top:16px;"><label>Website Perusahaan <span style="color:var(--text-muted);font-weight:400;">(Opsional)</span></label><input type="text" placeholder="https://perusahaan.com" /></div>
+      <div class="form-group"><label>Kota / Lokasi Utama</label><input type="text" value="Jakarta Selatan, DKI Jakarta" /></div>
+      <div class="footer">
+        <button class="btn-nav btn-back">← Kembali</button>
+        <a href="02-dashboard.html"><button class="btn-nav btn-next">Lanjut: Undang Tim →</button></a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

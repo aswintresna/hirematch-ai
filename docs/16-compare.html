@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Bandingkan Kandidat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444; --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35; --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8; --sidebar-w: 240px; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 12px; position: sticky; top: 0; z-index: 5; }
+    .btn { padding: 8px 18px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .content { padding: 24px 28px; overflow-x: auto; }
+    .page-title { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 6px; }
+    .page-desc { color: var(--text-muted); font-size: 0.88rem; margin-bottom: 24px; }
+
+    /* COMPARE TABLE */
+    .compare-table { width: 100%; border-collapse: separate; border-spacing: 0; min-width: 900px; }
+    .compare-table th, .compare-table td { padding: 0; vertical-align: top; }
+    .col-label { width: 180px; }
+    .col-cand { width: 240px; }
+
+    /* HEADER CARDS */
+    .cand-header { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px 16px 0 0; padding: 20px; margin: 0 8px; text-align: center; position: relative; }
+    .cand-header.winner { border-color: rgba(16,185,129,0.3); background: linear-gradient(145deg, #13162A, rgba(16,185,129,0.05)); }
+    .winner-badge { position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #10B981, #059669); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 3px 12px; border-radius: 99px; white-space: nowrap; }
+    .cand-header-av { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: 800; margin: 0 auto 10px; font-family: 'Outfit', sans-serif; }
+    .cand-header-name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 4px; }
+    .cand-header-role { font-size: 0.78rem; color: var(--text-muted); margin-bottom: 10px; }
+    .score-big { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; }
+    .grade-pill { display: inline-block; padding: 3px 12px; border-radius: 99px; font-size: 0.75rem; font-weight: 700; margin-top: 4px; }
+    .grade-a { background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.2); }
+    .grade-b { background: rgba(92,106,196,0.12); color: #818CF8; border: 1px solid rgba(92,106,196,0.2); }
+    .grade-c { background: rgba(245,158,11,0.1); color: #FCD34D; border: 1px solid rgba(245,158,11,0.2); }
+
+    /* ROW LABELS */
+    .row-label-cell { padding: 14px 10px 14px 0; }
+    .row-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+    .section-header td { padding: 20px 0 8px; }
+    .section-header-label { font-family: 'Outfit', sans-serif; font-size: 0.85rem; font-weight: 700; color: var(--primary); }
+
+    /* DATA CELLS */
+    .data-cell { background: var(--bg-card); border: 1px solid var(--border); border-top: none; padding: 14px 16px; margin: 0 8px; }
+    .data-cell.winner { border-color: rgba(16,185,129,0.2); background: linear-gradient(145deg, #13162A, rgba(16,185,129,0.03)); }
+    .data-cell.last { border-radius: 0 0 12px 12px; }
+    .cell-val { font-size: 0.87rem; font-weight: 500; }
+    .cell-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 3px; }
+    .check { color: #34D399; } .cross { color: #FCA5A5; } .partial { color: #FCD34D; }
+
+    /* SCORE BAR IN CELL */
+    .mini-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .mini-bar { flex: 1; height: 6px; border-radius: 99px; background: var(--bg-surface); overflow: hidden; }
+    .mini-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+    .mini-num { font-size: 0.82rem; font-weight: 700; min-width: 30px; }
+
+    /* SKILLS */
+    .skill-wrap { display: flex; flex-wrap: wrap; gap: 5px; }
+    .skill-tag { padding: 2px 8px; border-radius: 99px; font-size: 0.72rem; font-weight: 600; }
+    .s-match { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2); color: #34D399; }
+    .s-miss { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.15); color: #FCA5A5; }
+    .s-neutral { background: rgba(92,106,196,0.1); border: 1px solid rgba(92,106,196,0.18); color: #818CF8; }
+    select { width: 100%; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; color: var(--text); font-size: 0.82rem; font-family: 'Inter', sans-serif; outline: none; cursor: pointer; }
+    .select-header { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px 12px 0 0; padding: 12px 14px; margin: 0 8px; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item active"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div style="font-size:0.85rem;font-weight:600;">Aswin Tresna</div><div style="font-size:0.75rem;color:var(--text-muted);">HR Manager</div></div></div></div>
+  </aside>
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1;font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;">Bandingkan Kandidat</div>
+      <button class="btn btn-outline">← Kembali</button>
+      <button class="btn btn-primary">📤 Export Perbandingan</button>
+    </header>
+    <div class="content">
+      <div class="page-title">⚖️ Perbandingan Kandidat</div>
+      <p class="page-desc">Frontend Developer (React.js) · Bandingkan hingga 3 kandidat secara berdampingan</p>
+
+      <table class="compare-table">
+        <colgroup>
+          <col class="col-label"/><col class="col-cand"/><col class="col-cand"/><col class="col-cand"/>
+        </colgroup>
+        <thead>
+          <tr>
+            <th></th>
+            <th>
+              <div class="cand-header winner">
+                <span class="winner-badge">🏆 Rekomendasi Terbaik</span>
+                <div class="cand-header-av" style="background:linear-gradient(135deg,#5C6AC4,#7C3AED)">BS</div>
+                <div class="cand-header-name">Budi Santoso</div>
+                <div class="cand-header-role">Frontend Dev · 4 tahun</div>
+                <div class="score-big" style="color:#34D399">92</div>
+                <div class="grade-pill grade-a">⭐ Grade A</div>
+              </div>
+            </th>
+            <th>
+              <div class="cand-header">
+                <div class="cand-header-av" style="background:linear-gradient(135deg,#10B981,#059669)">SA</div>
+                <div class="cand-header-name">Siti Aminah</div>
+                <div class="cand-header-role">Backend Dev · 3 tahun</div>
+                <div class="score-big" style="color:#818CF8">88</div>
+                <div class="grade-pill grade-a">⭐ Grade A</div>
+              </div>
+            </th>
+            <th>
+              <div class="cand-header">
+                <div class="cand-header-av" style="background:linear-gradient(135deg,#06B6D4,#3B82F6)">MR</div>
+                <div class="cand-header-name">Muhammad Rizki</div>
+                <div class="cand-header-role">Frontend Dev · 2 tahun</div>
+                <div class="score-big" style="color:#FCD34D">75</div>
+                <div class="grade-pill grade-b">✅ Grade B</div>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- SECTION: SKOR -->
+          <tr class="section-header"><td colspan="4"><span class="section-header-label">📊 SKOR PER KRITERIA</span></td></tr>
+          <tr>
+            <td class="row-label-cell"><div class="row-label">Skills Teknis (40%)</div></td>
+            <td><div class="data-cell winner"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:88%"></div></div><span class="mini-num" style="color:#34D399">88</span></div></div></td>
+            <td><div class="data-cell"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:82%"></div></div><span class="mini-num" style="color:#818CF8">82</span></div></div></td>
+            <td><div class="data-cell"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:75%"></div></div><span class="mini-num" style="color:#FCD34D">75</span></div></div></td>
+          </tr>
+          <tr>
+            <td class="row-label-cell"><div class="row-label">Pengalaman (30%)</div></td>
+            <td><div class="data-cell winner"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:95%"></div></div><span class="mini-num" style="color:#34D399">95</span></div></div></td>
+            <td><div class="data-cell"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:88%"></div></div><span class="mini-num">88</span></div></div></td>
+            <td><div class="data-cell"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:60%"></div></div><span class="mini-num" style="color:#FCA5A5">60</span></div></div></td>
+          </tr>
+          <tr>
+            <td class="row-label-cell"><div class="row-label">Pendidikan (20%)</div></td>
+            <td><div class="data-cell winner"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:90%"></div></div><span class="mini-num">90</span></div></div></td>
+            <td><div class="data-cell"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:90%"></div></div><span class="mini-num">90</span></div></div></td>
+            <td><div class="data-cell"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:85%"></div></div><span class="mini-num">85</span></div></div></td>
+          </tr>
+          <tr>
+            <td class="row-label-cell"><div class="row-label">Sertifikasi (10%)</div></td>
+            <td><div class="data-cell winner"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:75%"></div></div><span class="mini-num">75</span></div></div></td>
+            <td><div class="data-cell"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:50%"></div></div><span class="mini-num" style="color:#FCA5A5">50</span></div></div></td>
+            <td><div class="data-cell"><div class="mini-bar-wrap"><div class="mini-bar"><div class="mini-fill" style="width:70%"></div></div><span class="mini-num">70</span></div></div></td>
+          </tr>
+          <!-- SECTION: PROFIL -->
+          <tr class="section-header"><td colspan="4"><span class="section-header-label">👤 PROFIL & PENGALAMAN</span></td></tr>
+          <tr>
+            <td class="row-label-cell"><div class="row-label">Pengalaman Kerja</div></td>
+            <td><div class="data-cell winner"><div class="cell-val">4 tahun</div><div class="cell-sub check">✅ Melebihi requirement (3 thn)</div></div></td>
+            <td><div class="data-cell"><div class="cell-val">3 tahun</div><div class="cell-sub check">✅ Memenuhi requirement</div></div></td>
+            <td><div class="data-cell"><div class="cell-val">2 tahun</div><div class="cell-sub cross">❌ Di bawah requirement</div></div></td>
+          </tr>
+          <tr>
+            <td class="row-label-cell"><div class="row-label">Pendidikan</div></td>
+            <td><div class="data-cell winner"><div class="cell-val">S1 Ilmu Komputer</div><div class="cell-sub">Universitas Indonesia · IPK 3.72</div></div></td>
+            <td><div class="data-cell"><div class="cell-val">S1 Teknik Informatika</div><div class="cell-sub">ITB · IPK 3.65</div></div></td>
+            <td><div class="data-cell"><div class="cell-val">S1 Sistem Informasi</div><div class="cell-sub">BINUS · IPK 3.50</div></div></td>
+          </tr>
+          <tr>
+            <td class="row-label-cell"><div class="row-label">Lokasi</div></td>
+            <td><div class="data-cell winner"><div class="cell-val">Jakarta Selatan</div><div class="cell-sub check">✅ Sesuai lokasi kantor</div></div></td>
+            <td><div class="data-cell"><div class="cell-val">Jakarta Timur</div><div class="cell-sub check">✅ Sesuai</div></div></td>
+            <td><div class="data-cell"><div class="cell-val">Tangerang</div><div class="cell-sub partial">🔶 Perlu konfirmasi komute</div></div></td>
+          </tr>
+          <!-- SECTION: SKILLS -->
+          <tr class="section-header"><td colspan="4"><span class="section-header-label">🛠️ SKILLS UTAMA</span></td></tr>
+          <tr>
+            <td class="row-label-cell"><div class="row-label">Skills</div></td>
+            <td><div class="data-cell winner"><div class="skill-wrap"><span class="skill-tag s-match">React.js</span><span class="skill-tag s-match">TypeScript</span><span class="skill-tag s-match">Git</span><span class="skill-tag s-match">Figma</span><span class="skill-tag s-miss">Docker</span></div></div></td>
+            <td><div class="data-cell"><div class="skill-wrap"><span class="skill-tag s-match">React.js</span><span class="skill-tag s-match">TypeScript</span><span class="skill-tag s-neutral">Redux</span><span class="skill-tag s-miss">Figma</span><span class="skill-tag s-miss">Docker</span></div></div></td>
+            <td><div class="data-cell"><div class="skill-wrap"><span class="skill-tag s-match">React.js</span><span class="skill-tag s-match">TypeScript</span><span class="skill-tag s-neutral">GraphQL</span><span class="skill-tag s-miss">Figma</span></div></div></td>
+          </tr>
+          <!-- SECTION: ACTION -->
+          <tr class="section-header"><td colspan="4"><span class="section-header-label">⚡ AKSI</span></td></tr>
+          <tr>
+            <td class="row-label-cell"></td>
+            <td><div class="data-cell winner last" style="border-radius:0 0 12px 12px;"><a href="14-interview.html"><button style="width:100%;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;">🗓️ Jadwalkan Interview</button></a></div></td>
+            <td><div class="data-cell last" style="border-radius:0 0 12px 12px;"><a href="14-interview.html"><button style="width:100%;padding:10px;border-radius:8px;border:none;background:linear-gradient(135deg,#5C6AC4,#7C3AED);color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;">🗓️ Jadwalkan Interview</button></a></div></td>
+            <td><div class="data-cell last" style="border-radius:0 0 12px 12px;"><button style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(239,68,68,0.2);background:rgba(239,68,68,0.07);color:#FCA5A5;font-size:0.85rem;font-weight:700;cursor:pointer;">❌ Tolak Kandidat</button></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Cek Status Lamaran</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --primary: #5C6AC4; --accent: #10B981; --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35; --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    .topnav { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 32px; gap: 20px; }
+    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text); }
+    .topnav-right { margin-left: auto; font-size: 0.85rem; color: var(--text-muted); }
+    .hero { background: linear-gradient(135deg, rgba(92,106,196,0.1), rgba(16,185,129,0.05)); border-bottom: 1px solid var(--border); padding: 48px 32px; text-align: center; }
+    .hero-title { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; margin-bottom: 8px; }
+    .hero-title span { background: linear-gradient(135deg, #818CF8, #34D399); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-desc { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 24px; }
+    .search-bar { display: flex; gap: 10px; max-width: 500px; margin: 0 auto; }
+    .search-input { flex: 1; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; color: var(--text); font-size: 0.9rem; font-family: 'Inter', sans-serif; outline: none; }
+    .search-input:focus { border-color: rgba(92,106,196,0.5); }
+    .search-input::placeholder { color: var(--text-muted); }
+    .btn { padding: 12px 20px; border-radius: 10px; border: none; font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; }
+    .content { max-width: 700px; margin: 0 auto; padding: 36px 24px; }
+    /* STATUS CARD */
+    .status-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden; margin-bottom: 24px; }
+    .status-header { background: linear-gradient(135deg, rgba(92,106,196,0.1), rgba(16,185,129,0.05)); border-bottom: 1px solid var(--border); padding: 24px; display: flex; align-items: center; gap: 16px; }
+    .cand-av { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #7C3AED); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; font-family: 'Outfit', sans-serif; }
+    .cand-name { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; }
+    .cand-meta { font-size: 0.82rem; color: var(--text-muted); margin-top: 3px; }
+    .status-badge { margin-left: auto; padding: 6px 16px; border-radius: 99px; font-size: 0.8rem; font-weight: 700; }
+    .status-body { padding: 28px; }
+    /* PIPELINE TRACKER */
+    .pipeline { display: flex; align-items: flex-start; justify-content: space-between; position: relative; margin-bottom: 28px; }
+    .pipeline::before { content: ''; position: absolute; top: 20px; left: 20px; right: 20px; height: 2px; background: var(--bg-surface); z-index: 0; }
+    .pipeline-fill { position: absolute; top: 20px; left: 20px; height: 2px; background: linear-gradient(90deg, var(--primary), var(--accent)); z-index: 1; width: 40%; }
+    .pipe-step { display: flex; flex-direction: column; align-items: center; gap: 8px; z-index: 2; flex: 1; }
+    .pipe-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; border: 2px solid var(--border); background: var(--bg); }
+    .pipe-step.done .pipe-icon { background: rgba(16,185,129,0.12); border-color: rgba(16,185,129,0.3); }
+    .pipe-step.current .pipe-icon { background: linear-gradient(135deg, var(--primary), #7C3AED); border-color: transparent; box-shadow: 0 0 0 4px rgba(92,106,196,0.2); }
+    .pipe-step.pending .pipe-icon { background: var(--bg-surface); }
+    .pipe-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-align: center; }
+    .pipe-step.done .pipe-label { color: #34D399; }
+    .pipe-step.current .pipe-label { color: #818CF8; }
+    /* INFO ROWS */
+    .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+    .info-item { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+    .info-label { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 5px; }
+    .info-val { font-size: 0.9rem; font-weight: 600; }
+    /* TIMELINE */
+    .timeline { display: flex; flex-direction: column; gap: 0; }
+    .tl-item { display: flex; gap: 14px; }
+    .tl-left { display: flex; flex-direction: column; align-items: center; }
+    .tl-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+    .tl-line { flex: 1; width: 2px; background: var(--border); margin: 4px 0; }
+    .tl-body { padding-bottom: 18px; }
+    .tl-title { font-size: 0.87rem; font-weight: 600; margin-bottom: 3px; }
+    .tl-desc { font-size: 0.79rem; color: var(--text-muted); line-height: 1.5; }
+    .tl-time { font-size: 0.74rem; color: var(--text-muted); margin-top: 4px; }
+    /* OPEN JOBS */
+    .job-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .job-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; text-decoration: none; color: inherit; transition: all 0.2s; }
+    .job-card:hover { border-color: rgba(92,106,196,0.3); transform: translateY(-2px); }
+    .job-icon { font-size: 1.5rem; margin-bottom: 10px; }
+    .job-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 4px; }
+    .job-meta { font-size: 0.77rem; color: var(--text-muted); }
+    .job-badge { display: inline-block; margin-top: 10px; padding: 3px 10px; border-radius: 99px; font-size: 0.72rem; font-weight: 600; background: rgba(16,185,129,0.1); color: #34D399; }
+  </style>
+</head>
+<body>
+  <nav class="topnav">
+    <a href="#" class="logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></a>
+    <div class="topnav-right">Portal Pelamar · <a href="01-login.html" style="color:var(--primary);text-decoration:none;font-weight:600;">Login HR →</a></div>
+  </nav>
+
+  <div class="hero">
+    <h1 class="hero-title">Cek Status <span>Lamaranmu</span></h1>
+    <p class="hero-desc">Masukkan email yang kamu gunakan saat melamar untuk melihat status terkini.</p>
+    <div class="search-bar">
+      <input type="email" class="search-input" placeholder="email@kamu.com" value="budi.s@gmail.com" />
+      <button class="btn btn-primary">Cek Status →</button>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- STATUS CARD -->
+    <div class="status-card">
+      <div class="status-header">
+        <div class="cand-av">BS</div>
+        <div>
+          <div class="cand-name">Budi Santoso</div>
+          <div class="cand-meta">Melamar untuk: Frontend Developer (React.js) · PT Maju Bersama Indonesia</div>
+        </div>
+        <span class="status-badge" style="background:rgba(245,158,11,0.1);color:#FCD34D;border:1px solid rgba(245,158,11,0.2);">🔶 Dalam Proses Review HR</span>
+      </div>
+      <div class="status-body">
+        <!-- PIPELINE TRACKER -->
+        <div class="pipeline">
+          <div class="pipeline-fill"></div>
+          <div class="pipe-step done"><div class="pipe-icon">✅</div><div class="pipe-label">Lamaran<br/>Diterima</div></div>
+          <div class="pipe-step done"><div class="pipe-icon">🤖</div><div class="pipe-label">AI<br/>Screening</div></div>
+          <div class="pipe-step current"><div class="pipe-icon">👀</div><div class="pipe-label">Review<br/>HR</div></div>
+          <div class="pipe-step pending"><div class="pipe-icon">🗓️</div><div class="pipe-label">Interview</div></div>
+          <div class="pipe-step pending"><div class="pipe-icon">🎉</div><div class="pipe-label">Keputusan<br/>Final</div></div>
+        </div>
+        <!-- INFO GRID -->
+        <div class="info-grid">
+          <div class="info-item"><div class="info-label">📅 Tanggal Melamar</div><div class="info-val">10 Mei 2026</div></div>
+          <div class="info-item"><div class="info-label">🏢 Departemen</div><div class="info-val">Engineering</div></div>
+          <div class="info-item"><div class="info-label">🤖 AI Match Score</div><div class="info-val" style="color:#34D399;">92 / 100 ⭐</div></div>
+          <div class="info-item"><div class="info-label">📍 Lokasi</div><div class="info-val">Jakarta / Remote</div></div>
+        </div>
+        <!-- TIMELINE -->
+        <div style="font-family:'Outfit',sans-serif;font-size:0.88rem;font-weight:700;color:var(--text-muted);margin-bottom:14px;text-transform:uppercase;letter-spacing:0.06em;">Riwayat Status</div>
+        <div class="timeline">
+          <div class="tl-item">
+            <div class="tl-left"><div class="tl-dot" style="background:#34D399"></div><div class="tl-line"></div></div>
+            <div class="tl-body"><div class="tl-title">CV masuk ke Review HR</div><div class="tl-desc">Tim HR sedang meninjau profilmu secara lebih mendalam.</div><div class="tl-time">🕐 15 Mei 2026, 10:00</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-left"><div class="tl-dot" style="background:#818CF8"></div><div class="tl-line"></div></div>
+            <div class="tl-body"><div class="tl-title">AI Screening selesai</div><div class="tl-desc">Profilmu mendapatkan skor 92/100 dan masuk Shortlist AI.</div><div class="tl-time">🕐 12 Mei 2026, 08:23</div></div>
+          </div>
+          <div class="tl-item">
+            <div class="tl-left"><div class="tl-dot" style="background:#5C6AC4"></div></div>
+            <div class="tl-body"><div class="tl-title">Lamaran diterima</div><div class="tl-desc">CV berhasil diupload dan mulai diproses sistem.</div><div class="tl-time">🕐 10 Mei 2026, 14:15</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OTHER OPEN JOBS -->
+    <div style="font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;margin-bottom:14px;">💼 Lowongan Lain yang Terbuka</div>
+    <div class="job-grid">
+      <a href="#" class="job-card"><div class="job-icon">🐍</div><div class="job-title">Backend Developer (Node.js)</div><div class="job-meta">Engineering · Jakarta · 3 posisi</div><span class="job-badge">● Aktif</span></a>
+      <a href="#" class="job-card"><div class="job-icon">📊</div><div class="job-title">Data Analyst</div><div class="job-meta">Data & Analytics · Remote · 2 posisi</div><span class="job-badge">● Aktif</span></a>
+      <a href="#" class="job-card"><div class="job-icon">🎨</div><div class="job-title">UI/UX Designer</div><div class="job-meta">Product · Jakarta · 1 posisi</div><span class="job-badge">● Aktif</span></a>
+      <a href="#" class="job-card"><div class="job-icon">📦</div><div class="job-title">Product Manager</div><div class="job-meta">Product · Jakarta · 1 posisi</div><span class="job-badge">● Aktif</span></a>
+    </div>
+  </div>
+</body>
+</html>
