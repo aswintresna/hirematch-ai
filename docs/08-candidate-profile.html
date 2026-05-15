@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Profil Kandidat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 12px; position: sticky; top: 0; z-index: 5; }
+    .btn { padding: 8px 18px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+    .btn-success { background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.25); }
+    .content { padding: 24px 28px; display: grid; grid-template-columns: 300px 1fr; gap: 24px; }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 18px; }
+    .card-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; }
+
+    /* LEFT: PROFILE CARD */
+    .profile-card {
+      background: linear-gradient(145deg, rgba(92,106,196,0.1), rgba(124,58,237,0.04));
+      border: 1px solid rgba(92,106,196,0.18); border-radius: 20px; padding: 28px 20px;
+      text-align: center; margin-bottom: 18px;
+    }
+    .profile-avatar { width: 88px; height: 88px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #7C3AED); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: 800; margin: 0 auto 14px; border: 3px solid rgba(92,106,196,0.3); }
+    .profile-name { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; margin-bottom: 4px; }
+    .profile-title { color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px; }
+    .score-ring-wrap { position: relative; width: 120px; height: 120px; margin: 0 auto 10px; }
+    .score-ring-wrap svg { transform: rotate(-90deg); }
+    .score-ring-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); text-align: center; }
+    .score-num-big { font-family: 'Outfit', sans-serif; font-size: 2rem; font-weight: 800; display: block; }
+    .score-label { font-size: 0.7rem; color: var(--text-muted); }
+    .grade-badge { display: inline-block; padding: 5px 18px; border-radius: 99px; font-weight: 700; font-size: 0.88rem; margin: 8px 0 14px; background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.25); }
+    .rec-label { font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+    .contact-list { display: flex; flex-direction: column; gap: 10px; }
+    .contact-item { display: flex; align-items: center; gap: 10px; font-size: 0.83rem; }
+    .contact-icon { width: 28px; height: 28px; border-radius: 7px; background: var(--bg-surface); display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+    .contact-text { color: var(--text-muted); word-break: break-all; }
+    .action-stack { display: flex; flex-direction: column; gap: 8px; }
+
+    /* RIGHT */
+    .criteria-breakdown { display: flex; flex-direction: column; gap: 14px; }
+    .crit-row .crit-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+    .crit-name { font-size: 0.85rem; font-weight: 500; }
+    .crit-score { font-size: 0.85rem; font-weight: 700; }
+    .crit-bar { height: 8px; border-radius: 99px; background: var(--bg-surface); overflow: hidden; margin-bottom: 4px; }
+    .crit-fill { height: 100%; border-radius: 99px; }
+    .crit-note { font-size: 0.75rem; color: var(--text-muted); }
+    .skill-wrap { display: flex; flex-wrap: wrap; gap: 7px; }
+    .skill-tag { padding: 4px 12px; border-radius: 99px; font-size: 0.78rem; font-weight: 600; }
+    .match { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.2); color: #34D399; }
+    .partial { background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.2); color: #FCD34D; }
+    .missing { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.15); color: #FCA5A5; }
+    .neutral { background: rgba(92,106,196,0.1); border: 1px solid rgba(92,106,196,0.18); color: #818CF8; }
+    .ai-note { background: rgba(92,106,196,0.07); border: 1px solid rgba(92,106,196,0.15); border-radius: 14px; padding: 16px; }
+    .ai-note-header { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; font-weight: 700; margin-bottom: 10px; color: #818CF8; }
+    .ai-note-text { font-size: 0.83rem; color: var(--text-muted); line-height: 1.75; }
+    .ai-note-text strong { color: var(--text); }
+    .pro-con { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px; }
+    .pro-list, .con-list { display: flex; flex-direction: column; gap: 7px; }
+    .pro-item { display: flex; gap: 7px; font-size: 0.8rem; color: var(--text-muted); }
+    .pro-item::before { content: '✅'; flex-shrink: 0; }
+    .con-item { display: flex; gap: 7px; font-size: 0.8rem; color: var(--text-muted); }
+    .con-item::before { content: '⚠️'; flex-shrink: 0; }
+    .stage-selector { display: flex; gap: 8px; flex-wrap: wrap; }
+    .stage-opt { padding: 6px 14px; border-radius: 8px; border: 1px solid var(--border); font-size: 0.8rem; font-weight: 600; cursor: pointer; background: transparent; color: var(--text-muted); transition: all 0.2s; }
+    .stage-opt.current { background: rgba(92,106,196,0.15); border-color: rgba(92,106,196,0.3); color: #818CF8; }
+    .stage-opt:hover:not(.current) { border-color: rgba(255,255,255,0.15); color: var(--text); }
+    .note-box { width: 100%; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 10px; padding: 10px 13px; color: var(--text); font-size: 0.85rem; font-family: 'Inter', sans-serif; outline: none; resize: vertical; min-height: 80px; margin-top: 12px; }
+    .note-box::placeholder { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="#" class="nav-item active"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div class="user-name">Aswin Tresna</div><div class="user-role">HR Manager</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1;font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;">Profil Kandidat — Budi Santoso</div>
+      <button class="btn btn-outline">← Kembali ke Shortlist</button>
+      <button class="btn btn-outline">📥 Download CV</button>
+      <button class="btn btn-success">🗓️ Jadwalkan Interview</button>
+      <button class="btn btn-danger">❌ Tolak</button>
+    </header>
+
+    <div class="content">
+      <!-- LEFT: PROFILE -->
+      <div>
+        <div class="profile-card">
+          <div class="profile-avatar">BS</div>
+          <div class="profile-name">Budi Santoso</div>
+          <div class="profile-title">Frontend Developer · 4 tahun pengalaman</div>
+          <div class="score-ring-wrap">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="48" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="10"/>
+              <circle cx="60" cy="60" r="48" fill="none" stroke="url(#g)" stroke-width="10" stroke-dasharray="301.6" stroke-dashoffset="24.1" stroke-linecap="round"/>
+              <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" stop-color="#5C6AC4"/><stop offset="100%" stop-color="#10B981"/></linearGradient></defs>
+            </svg>
+            <div class="score-ring-text"><span class="score-num-big">92</span><span class="score-label">/ 100</span></div>
+          </div>
+          <div class="grade-badge">⭐ Grade A</div>
+          <div class="rec-label">Sangat Direkomendasikan untuk posisi<br/><strong style="color:var(--text)">Frontend Developer (React.js)</strong></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📞 Kontak</div>
+          <div class="contact-list">
+            <div class="contact-item"><div class="contact-icon">📧</div><div class="contact-text">budi.s@gmail.com</div></div>
+            <div class="contact-item"><div class="contact-icon">📱</div><div class="contact-text">+62 812-3456-7890</div></div>
+            <div class="contact-item"><div class="contact-icon">📍</div><div class="contact-text">Jakarta Selatan, DKI Jakarta</div></div>
+            <div class="contact-item"><div class="contact-icon">🔗</div><div class="contact-text">linkedin.com/in/budisantoso</div></div>
+            <div class="contact-item"><div class="contact-icon">💻</div><div class="contact-text">github.com/budis</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">📋 Ubah Status</div>
+          <div class="stage-selector">
+            <div class="stage-opt">Shortlist</div>
+            <div class="stage-opt current">Review HR</div>
+            <div class="stage-opt">Interview</div>
+            <div class="stage-opt">Offering</div>
+            <div class="stage-opt">Diterima</div>
+          </div>
+          <textarea class="note-box" placeholder="Tambahkan catatan tentang kandidat ini..."></textarea>
+          <button class="btn btn-primary" style="width:100%;margin-top:10px;padding:11px;">Simpan Status</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: DETAIL -->
+      <div>
+        <!-- AI ANALYSIS -->
+        <div class="ai-note" style="margin-bottom:18px;">
+          <div class="ai-note-header">🤖 Analisis AI — Ringkasan</div>
+          <div class="ai-note-text">
+            Budi Santoso adalah kandidat yang sangat kuat untuk posisi Frontend Developer. Pengalamannya di <strong>Tokopedia</strong> dan <strong>Gojek</strong> menunjukkan kemampuan bekerja dalam skala besar dengan standar kode yang tinggi. Penguasaan <strong>React.js + TypeScript</strong> sangat sesuai dengan requirement utama.
+          </div>
+          <div class="pro-con">
+            <div>
+              <div style="font-size:0.78rem;font-weight:700;color:#34D399;margin-bottom:8px;">KELEBIHAN</div>
+              <div class="pro-list">
+                <div class="pro-item">4 tahun pengalaman relevan</div>
+                <div class="pro-item">Track record top tech company</div>
+                <div class="pro-item">IPK 3.72 dari UI</div>
+                <div class="pro-item">Sertifikasi Meta Frontend</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:0.78rem;font-weight:700;color:#F59E0B;margin-bottom:8px;">KEKURANGAN</div>
+              <div class="con-list">
+                <div class="con-item">Belum punya Docker/AWS</div>
+                <div class="con-item">Next.js perlu diasah</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SCORE BREAKDOWN -->
+        <div class="card">
+          <div class="card-title">📊 Breakdown Skor per Kriteria</div>
+          <div class="criteria-breakdown">
+            <div class="crit-row">
+              <div class="crit-header"><span class="crit-name">🛠️ Skills Teknis (Bobot 40%)</span><span class="crit-score" style="color:#34D399">88/100 → kontribusi 35.2 poin</span></div>
+              <div class="crit-bar"><div class="crit-fill" style="width:88%;background:linear-gradient(90deg,#10B981,#059669)"></div></div>
+              <div class="crit-note">React ✅, TypeScript ✅, JavaScript ✅, Figma ✅ | Docker ❌, AWS ❌</div>
+            </div>
+            <div class="crit-row">
+              <div class="crit-header"><span class="crit-name">⏳ Pengalaman Kerja (Bobot 30%)</span><span class="crit-score" style="color:#34D399">95/100 → kontribusi 28.5 poin</span></div>
+              <div class="crit-bar"><div class="crit-fill" style="width:95%;background:linear-gradient(90deg,#5C6AC4,#7C3AED)"></div></div>
+              <div class="crit-note">4 tahun pengalaman (req: 3 tahun) · Level Senior · Perusahaan tier-1</div>
+            </div>
+            <div class="crit-row">
+              <div class="crit-header"><span class="crit-name">🎓 Pendidikan (Bobot 15%)</span><span class="crit-score" style="color:#818CF8">90/100 → kontribusi 13.5 poin</span></div>
+              <div class="crit-bar"><div class="crit-fill" style="width:90%;background:linear-gradient(90deg,#818CF8,#5C6AC4)"></div></div>
+              <div class="crit-note">S1 Ilmu Komputer UI (req: S1 IT) · IPK 3.72</div>
+            </div>
+            <div class="crit-row">
+              <div class="crit-header"><span class="crit-name">📜 Sertifikasi (Bobot 10%)</span><span class="crit-score" style="color:#FCD34D">75/100 → kontribusi 7.5 poin</span></div>
+              <div class="crit-bar"><div class="crit-fill" style="width:75%;background:linear-gradient(90deg,#F59E0B,#D97706)"></div></div>
+              <div class="crit-note">Meta Frontend Dev Certificate ✅ | AWS ❌</div>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:var(--bg-surface);border-radius:10px;border:1px solid var(--border);">
+              <span style="font-weight:600;">Total Skor Akhir</span>
+              <span style="font-family:'Outfit',sans-serif;font-size:1.4rem;font-weight:800;color:#34D399;">84.7 / 100</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- SKILLS -->
+        <div class="card">
+          <div class="card-title">🛠️ Skills Terdeteksi</div>
+          <div style="margin-bottom:8px;font-size:0.78rem;color:var(--text-muted);">
+            <span style="color:#34D399">● Cocok</span> &nbsp;
+            <span style="color:#FCD34D">● Sebagian</span> &nbsp;
+            <span style="color:#FCA5A5">● Kurang (requirement)</span> &nbsp;
+            <span style="color:#818CF8">● Bonus</span>
+          </div>
+          <div class="skill-wrap">
+            <span class="skill-tag match">React.js</span>
+            <span class="skill-tag match">TypeScript</span>
+            <span class="skill-tag match">JavaScript</span>
+            <span class="skill-tag match">HTML/CSS</span>
+            <span class="skill-tag match">Git</span>
+            <span class="skill-tag match">REST API</span>
+            <span class="skill-tag match">Figma</span>
+            <span class="skill-tag partial">Next.js</span>
+            <span class="skill-tag partial">Redux</span>
+            <span class="skill-tag partial">GraphQL</span>
+            <span class="skill-tag neutral">Tailwind CSS</span>
+            <span class="skill-tag neutral">Jest</span>
+            <span class="skill-tag missing">Docker</span>
+            <span class="skill-tag missing">AWS</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

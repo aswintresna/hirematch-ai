@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Buat Lowongan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 5; }
+    .topbar-title { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; flex: 1; }
+    .btn { padding: 9px 20px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; box-shadow: 0 4px 16px rgba(92,106,196,0.25); }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .content { padding: 28px; display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+    .card-title { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--text-muted); margin-bottom: 7px; }
+    input[type="text"], input[type="number"], textarea, select {
+      width: 100%; background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 0.88rem;
+      font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: rgba(92,106,196,0.5); box-shadow: 0 0 0 3px rgba(92,106,196,0.08); }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    textarea { resize: vertical; min-height: 100px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .req-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; background: rgba(239,68,68,0.15); color: #FCA5A5; margin-left: 6px; }
+
+    /* CRITERIA BUILDER */
+    .criteria-builder { }
+    .criteria-item {
+      display: flex; align-items: center; gap: 10px; padding: 12px 14px;
+      background: var(--bg-surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px;
+      transition: border-color 0.2s;
+    }
+    .criteria-item:hover { border-color: rgba(92,106,196,0.25); }
+    .criteria-item-drag { color: var(--text-muted); cursor: grab; font-size: 14px; flex-shrink: 0; }
+    .criteria-item-name { flex: 1; font-size: 0.87rem; font-weight: 500; }
+    .criteria-item-type { flex-shrink: 0; }
+    .type-badge { padding: 3px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; }
+    .type-required { background: rgba(239,68,68,0.1); color: #FCA5A5; }
+    .type-preferred { background: rgba(92,106,196,0.12); color: #818CF8; }
+    .type-nice { background: rgba(16,185,129,0.1); color: #34D399; }
+    .criteria-item-weight { width: 52px; text-align: center; font-size: 0.8rem; font-weight: 700; color: var(--primary); flex-shrink: 0; }
+    .criteria-del { color: var(--text-muted); cursor: pointer; font-size: 13px; flex-shrink: 0; }
+    .criteria-del:hover { color: var(--danger); }
+    .add-criteria-btn {
+      width: 100%; padding: 11px; border-radius: 10px; border: 1px dashed rgba(92,106,196,0.3);
+      background: rgba(92,106,196,0.04); color: var(--primary); font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s;
+    }
+    .add-criteria-btn:hover { background: rgba(92,106,196,0.08); border-color: rgba(92,106,196,0.5); }
+
+    /* WEIGHT CHART */
+    .weight-chart { display: flex; flex-direction: column; gap: 10px; }
+    .weight-row { display: flex; align-items: center; gap: 10px; }
+    .weight-label { font-size: 0.8rem; color: var(--text-muted); width: 100px; flex-shrink: 0; }
+    .weight-bar-wrap { flex: 1; height: 8px; border-radius: 99px; background: var(--bg-surface); overflow: hidden; }
+    .weight-fill { height: 100%; border-radius: 99px; }
+    .weight-pct { font-size: 0.8rem; font-weight: 700; width: 36px; text-align: right; flex-shrink: 0; }
+    .total-weight { display: flex; justify-content: space-between; padding: 10px 0; border-top: 1px solid var(--border); margin-top: 4px; font-size: 0.85rem; }
+    .total-ok { color: var(--accent); font-weight: 700; }
+
+    /* PREVIEW */
+    .preview-card { background: linear-gradient(135deg, rgba(92,106,196,0.08), rgba(124,58,237,0.04)); border: 1px solid rgba(92,106,196,0.18); border-radius: 16px; padding: 20px; }
+    .preview-title { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+    .preview-meta { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 14px; display: flex; flex-direction: column; gap: 4px; }
+    .preview-criteria { display: flex; flex-direction: column; gap: 6px; }
+    .preview-crit-item { display: flex; justify-content: space-between; font-size: 0.8rem; padding: 6px 10px; background: var(--bg-surface); border-radius: 8px; }
+    .preview-crit-name { color: var(--text); }
+    .preview-crit-weight { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item active"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div class="user-name">Aswin Tresna</div><div class="user-role">HR Manager</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1;">
+        <div class="topbar-title">Buat Lowongan Baru</div>
+      </div>
+      <button class="btn btn-outline">Simpan Draft</button>
+      <a href="07-job-detail.html"><button class="btn btn-primary">Publikasikan Lowongan →</button></a>
+    </header>
+
+    <div class="content">
+      <!-- LEFT: FORM -->
+      <div>
+        <!-- INFO DASAR -->
+        <div class="card">
+          <div class="card-title">📝 Informasi Dasar</div>
+          <div class="form-group">
+            <label>Nama Posisi <span class="req-badge">Wajib</span></label>
+            <input type="text" placeholder="cth: Frontend Developer (React.js)" value="Frontend Developer (React.js)" />
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0">
+              <label>Departemen</label>
+              <select><option selected>Engineering</option><option>Product</option><option>Design</option><option>Data & Analytics</option></select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label>Jumlah Posisi</label>
+              <input type="number" value="5" min="1" />
+            </div>
+          </div>
+          <div class="form-row" style="margin-top:18px;">
+            <div class="form-group" style="margin-bottom:0">
+              <label>Lokasi Kerja</label>
+              <select><option>Jakarta Selatan</option><option selected>Jakarta / Remote</option><option>Full Remote</option></select>
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label>Tipe Pekerjaan</label>
+              <select><option selected>Full-time</option><option>Part-time</option><option>Contract</option></select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:18px;">
+            <label>Rentang Gaji (Rp/bulan)</label>
+            <div class="form-row">
+              <input type="text" placeholder="Minimum (cth: 10000000)" value="10000000" />
+              <input type="text" placeholder="Maximum (cth: 18000000)" value="18000000" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Deskripsi Pekerjaan</label>
+            <textarea placeholder="Jelaskan tanggung jawab dan scope pekerjaan...">Kami mencari Frontend Developer berpengalaman untuk bergabung dengan tim Engineering kami. Kamu akan bertanggung jawab membangun antarmuka yang performan dan user-friendly menggunakan React.js dan TypeScript.</textarea>
+          </div>
+          <div class="form-group" style="margin-bottom:0">
+            <label>Deadline Pendaftaran</label>
+            <input type="text" value="30 Mei 2026" />
+          </div>
+        </div>
+
+        <!-- CRITERIA BUILDER -->
+        <div class="card">
+          <div class="card-title">🎯 Criteria Builder
+            <span style="font-size:0.75rem;color:var(--text-muted);font-weight:400;margin-left:auto;">Drag untuk mengurutkan · Klik untuk edit</span>
+          </div>
+
+          <div style="display:flex;gap:8px;margin-bottom:16px;">
+            <select style="flex:1;padding:8px 12px;font-size:0.82rem;"><option>Pilih Template Kriteria...</option><option>Template: Senior Developer</option><option>Template: Junior Developer</option><option>Template: Designer</option></select>
+            <button class="btn btn-outline" style="font-size:0.8rem;">Gunakan Template</button>
+          </div>
+
+          <div class="criteria-builder">
+            <div class="criteria-item">
+              <span class="criteria-item-drag">⠿</span>
+              <span class="criteria-item-name">Penguasaan React.js & TypeScript</span>
+              <span class="criteria-item-type"><span class="type-badge type-required">Wajib</span></span>
+              <span class="criteria-item-weight">40%</span>
+              <span class="criteria-del">✕</span>
+            </div>
+            <div class="criteria-item">
+              <span class="criteria-item-drag">⠿</span>
+              <span class="criteria-item-name">Pengalaman kerja min. 3 tahun</span>
+              <span class="criteria-item-type"><span class="type-badge type-required">Wajib</span></span>
+              <span class="criteria-item-weight">30%</span>
+              <span class="criteria-del">✕</span>
+            </div>
+            <div class="criteria-item">
+              <span class="criteria-item-drag">⠿</span>
+              <span class="criteria-item-name">Pendidikan min. S1 Informatika/IT</span>
+              <span class="criteria-item-type"><span class="type-badge type-preferred">Diutamakan</span></span>
+              <span class="criteria-item-weight">15%</span>
+              <span class="criteria-del">✕</span>
+            </div>
+            <div class="criteria-item">
+              <span class="criteria-item-drag">⠿</span>
+              <span class="criteria-item-name">Kemampuan baca desain Figma</span>
+              <span class="criteria-item-type"><span class="type-badge type-preferred">Diutamakan</span></span>
+              <span class="criteria-item-weight">10%</span>
+              <span class="criteria-del">✕</span>
+            </div>
+            <div class="criteria-item">
+              <span class="criteria-item-drag">⠿</span>
+              <span class="criteria-item-name">Punya sertifikasi Meta / AWS</span>
+              <span class="criteria-item-type"><span class="type-badge type-nice">Nice to Have</span></span>
+              <span class="criteria-item-weight">5%</span>
+              <span class="criteria-del">✕</span>
+            </div>
+          </div>
+          <button class="add-criteria-btn">+ Tambah Kriteria Baru</button>
+        </div>
+      </div>
+
+      <!-- RIGHT: PREVIEW -->
+      <div>
+        <!-- WEIGHT DISTRIBUTION -->
+        <div class="card">
+          <div class="card-title">⚖️ Distribusi Bobot</div>
+          <div class="weight-chart">
+            <div class="weight-row">
+              <span class="weight-label">Skills Teknis</span>
+              <div class="weight-bar-wrap"><div class="weight-fill" style="width:40%;background:linear-gradient(90deg,#5C6AC4,#7C3AED)"></div></div>
+              <span class="weight-pct" style="color:#818CF8">40%</span>
+            </div>
+            <div class="weight-row">
+              <span class="weight-label">Pengalaman</span>
+              <div class="weight-bar-wrap"><div class="weight-fill" style="width:30%;background:linear-gradient(90deg,#10B981,#059669)"></div></div>
+              <span class="weight-pct" style="color:#34D399">30%</span>
+            </div>
+            <div class="weight-row">
+              <span class="weight-label">Pendidikan</span>
+              <div class="weight-bar-wrap"><div class="weight-fill" style="width:15%;background:linear-gradient(90deg,#F59E0B,#D97706)"></div></div>
+              <span class="weight-pct" style="color:#FCD34D">15%</span>
+            </div>
+            <div class="weight-row">
+              <span class="weight-label">Figma</span>
+              <div class="weight-bar-wrap"><div class="weight-fill" style="width:10%;background:linear-gradient(90deg,#06B6D4,#3B82F6)"></div></div>
+              <span class="weight-pct" style="color:#67E8F9">10%</span>
+            </div>
+            <div class="weight-row">
+              <span class="weight-label">Sertifikasi</span>
+              <div class="weight-bar-wrap"><div class="weight-fill" style="width:5%;background:linear-gradient(90deg,#EF4444,#DC2626)"></div></div>
+              <span class="weight-pct" style="color:#FCA5A5">5%</span>
+            </div>
+          </div>
+          <div class="total-weight">
+            <span style="color:var(--text-muted)">Total bobot</span>
+            <span class="total-ok">✅ 100% — Valid</span>
+          </div>
+        </div>
+
+        <!-- JOB PREVIEW -->
+        <div class="card">
+          <div class="card-title">👁️ Preview Lowongan</div>
+          <div class="preview-card">
+            <div class="preview-title">Frontend Developer (React.js)</div>
+            <div class="preview-meta">
+              <span>🏢 Engineering · 5 posisi</span>
+              <span>📍 Jakarta / Remote · Full-time</span>
+              <span>💰 Rp 10 – 18 jt/bulan</span>
+              <span>📅 Tutup: 30 Mei 2026</span>
+            </div>
+            <div style="font-size:0.8rem;font-weight:600;color:var(--text-muted);margin-bottom:8px;">KRITERIA SELEKSI:</div>
+            <div class="preview-criteria">
+              <div class="preview-crit-item"><span class="preview-crit-name">🔴 React.js & TypeScript (Wajib)</span><span class="preview-crit-weight">40%</span></div>
+              <div class="preview-crit-item"><span class="preview-crit-name">🔴 Pengalaman 3+ tahun (Wajib)</span><span class="preview-crit-weight">30%</span></div>
+              <div class="preview-crit-item"><span class="preview-crit-name">🟡 Pendidikan S1 IT</span><span class="preview-crit-weight">15%</span></div>
+              <div class="preview-crit-item"><span class="preview-crit-name">🟡 Kemampuan Figma</span><span class="preview-crit-weight">10%</span></div>
+              <div class="preview-crit-item"><span class="preview-crit-name">🟢 Sertifikasi Meta/AWS</span><span class="preview-crit-weight">5%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TIPS -->
+        <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);border-radius:14px;padding:16px;font-size:0.82rem;color:var(--text-muted);line-height:1.7;">
+          <strong style="color:#34D399;display:block;margin-bottom:6px;">💡 Tips AI Matching</strong>
+          Semakin detail kriteria yang Anda tentukan, semakin akurat hasil matching AI. Pastikan total bobot = 100%.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

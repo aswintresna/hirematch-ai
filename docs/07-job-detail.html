@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Detail Lowongan Frontend Developer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 12px; position: sticky; top: 0; z-index: 5; }
+    .topbar-left { flex: 1; }
+    .topbar-title { font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 700; }
+    .breadcrumb { font-size: 0.78rem; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+    .btn { padding: 8px 16px; border-radius: 8px; border: none; font-size: 0.82rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .content { padding: 24px 28px; }
+
+    /* JOB HEADER */
+    .job-header {
+      background: linear-gradient(135deg, rgba(92,106,196,0.1), rgba(124,58,237,0.05));
+      border: 1px solid rgba(92,106,196,0.18); border-radius: 18px; padding: 24px 28px;
+      margin-bottom: 24px; display: flex; align-items: center; gap: 20px;
+    }
+    .job-header-icon { width: 56px; height: 56px; border-radius: 14px; background: rgba(92,106,196,0.15); display: flex; align-items: center; justify-content: center; font-size: 28px; flex-shrink: 0; }
+    .job-header-info { flex: 1; }
+    .job-header-title { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; margin-bottom: 6px; }
+    .job-header-meta { display: flex; gap: 16px; flex-wrap: wrap; }
+    .meta-item { display: flex; align-items: center; gap: 5px; font-size: 0.82rem; color: var(--text-muted); }
+    .job-header-stats { display: flex; gap: 16px; }
+    .stat-mini { text-align: center; }
+    .stat-mini-val { font-family: 'Outfit', sans-serif; font-size: 1.4rem; font-weight: 800; display: block; }
+    .stat-mini-label { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
+    .divider-v { width: 1px; background: var(--border); }
+
+    /* TABS */
+    .tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 20px; gap: 4px; }
+    .tab { padding: 10px 16px; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; margin-bottom: -1px; }
+    .tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+    .tab:hover:not(.active) { color: var(--text); }
+
+    /* FILTERS */
+    .table-toolbar { display: flex; gap: 10px; margin-bottom: 16px; align-items: center; }
+    .search-box { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 13px; flex: 1; max-width: 300px; }
+    .search-box span { font-size: 0.85rem; color: var(--text-muted); }
+    select { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 8px 13px; color: var(--text); font-size: 0.82rem; font-family: 'Inter', sans-serif; outline: none; cursor: pointer; }
+    .grade-filters { display: flex; gap: 6px; margin-left: auto; }
+    .gf { padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); transition: all 0.2s; }
+    .gf.a { background: rgba(16,185,129,0.1); color: #34D399; border-color: rgba(16,185,129,0.2); }
+    .gf.b { background: rgba(92,106,196,0.1); color: #818CF8; border-color: rgba(92,106,196,0.2); }
+    .gf.c { background: rgba(245,158,11,0.1); color: #FCD34D; border-color: rgba(245,158,11,0.2); }
+    .gf.d { background: rgba(239,68,68,0.08); color: #FCA5A5; border-color: rgba(239,68,68,0.15); }
+
+    /* TABLE */
+    .table-wrap { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; }
+    th { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 600; padding: 14px 18px; text-align: left; background: rgba(255,255,255,0.02); border-bottom: 1px solid var(--border); }
+    td { padding: 14px 18px; border-bottom: 1px solid var(--border); font-size: 0.87rem; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(255,255,255,0.02); }
+    .cand-cell { display: flex; align-items: center; gap: 12px; }
+    .cand-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; flex-shrink: 0; }
+    .cand-name { font-weight: 600; display: block; }
+    .cand-email { font-size: 0.76rem; color: var(--text-muted); }
+    .badge { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 0.74rem; font-weight: 700; }
+    .badge-a { background: rgba(16,185,129,0.12); color: #34D399; }
+    .badge-b { background: rgba(92,106,196,0.12); color: #818CF8; }
+    .badge-c { background: rgba(245,158,11,0.12); color: #FCD34D; }
+    .badge-d { background: rgba(239,68,68,0.08); color: #FCA5A5; }
+    .score-bar-wrap { display: flex; align-items: center; gap: 8px; }
+    .score-bar { flex: 1; height: 5px; border-radius: 99px; background: var(--bg-surface); overflow: hidden; min-width: 80px; }
+    .score-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+    .score-num { font-weight: 700; min-width: 28px; text-align: right; font-size: 0.85rem; }
+    .action-btns { display: flex; gap: 6px; }
+    .action-btn { padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; white-space: nowrap; transition: all 0.2s; }
+    .action-btn:hover { border-color: rgba(92,106,196,0.3); color: var(--primary); }
+    .action-btn.primary-sm { background: rgba(92,106,196,0.12); color: #818CF8; border-color: rgba(92,106,196,0.2); }
+    .rank { font-size: 0.8rem; font-weight: 700; color: var(--text-muted); width: 30px; }
+    .rank.gold { color: #F59E0B; }
+    .rank.silver { color: #94A3B8; }
+    .rank.bronze { color: #CD7C54; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item active"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div class="user-name">Aswin Tresna</div><div class="user-role">HR Manager</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <div class="topbar-title">Frontend Developer (React.js)</div>
+        <div class="breadcrumb"><a href="02-dashboard.html">Dashboard</a> / <a href="05-job-list.html">Lowongan</a> / <span>Frontend Developer</span></div>
+      </div>
+      <button class="btn btn-outline">✏️ Edit Kriteria</button>
+      <button class="btn btn-outline">📤 Export</button>
+      <a href="03-upload-cv.html"><button class="btn btn-primary">+ Tambah Kandidat</button></a>
+    </header>
+
+    <div class="content">
+      <!-- JOB HEADER -->
+      <div class="job-header">
+        <div class="job-header-icon">⚛️</div>
+        <div class="job-header-info">
+          <div class="job-header-title">Frontend Developer (React.js)</div>
+          <div class="job-header-meta">
+            <div class="meta-item">🏢 Engineering</div>
+            <div class="meta-item">📍 Jakarta / Remote</div>
+            <div class="meta-item">💰 Rp 10–18 jt/bulan</div>
+            <div class="meta-item">📅 Deadline: 30 Mei 2026 · <strong style="color:#F59E0B">15 hari lagi</strong></div>
+            <div class="meta-item" style="color:#34D399">● Aktif · 5 posisi</div>
+          </div>
+        </div>
+        <div class="divider-v"></div>
+        <div class="job-header-stats">
+          <div class="stat-mini"><span class="stat-mini-val">72</span><span class="stat-mini-label">Total Pelamar</span></div>
+          <div class="stat-mini"><span class="stat-mini-val" style="color:#34D399">18</span><span class="stat-mini-label">Shortlist AI</span></div>
+          <div class="stat-mini"><span class="stat-mini-val" style="color:#F59E0B">8</span><span class="stat-mini-label">Review HR</span></div>
+          <div class="stat-mini"><span class="stat-mini-val" style="color:#5C6AC4">3</span><span class="stat-mini-label">Interview</span></div>
+        </div>
+      </div>
+
+      <!-- TABS -->
+      <div class="tabs">
+        <div class="tab active">🤖 Shortlist AI (18)</div>
+        <div class="tab">👀 Review HR (8)</div>
+        <div class="tab">🗓️ Interview (3)</div>
+        <div class="tab">✅ Diterima (0)</div>
+        <div class="tab">❌ Ditolak (43)</div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="table-toolbar">
+        <div class="search-box"><span>🔍</span><span style="font-size:0.85rem;color:var(--text-muted);">Cari kandidat...</span></div>
+        <select><option>Urutkan: Skor Tertinggi</option><option>Skor Terendah</option><option>Terbaru</option><option>Nama A-Z</option></select>
+        <div class="grade-filters">
+          <div class="gf a">⭐ Grade A (5)</div>
+          <div class="gf b">✅ Grade B (8)</div>
+          <div class="gf c">🔶 Grade C (4)</div>
+          <div class="gf d">❌ Grade D (1)</div>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Kandidat</th>
+              <th>Skor Match</th>
+              <th>Grade</th>
+              <th>Skills Cocok</th>
+              <th>Pengalaman</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="rank gold">🥇 1</span></td>
+              <td><div class="cand-cell"><div class="cand-avatar" style="background:linear-gradient(135deg,#5C6AC4,#7C3AED)">BS</div><div><span class="cand-name">Budi Santoso</span><span class="cand-email">budi.s@gmail.com</span></div></div></td>
+              <td><div class="score-bar-wrap"><div class="score-bar"><div class="score-fill" style="width:92%"></div></div><span class="score-num">92</span></div></td>
+              <td><span class="badge badge-a">⭐ Grade A</span></td>
+              <td>React, TS, Git, Figma</td>
+              <td>4 tahun</td>
+              <td class="action-btns"><a href="08-candidate-profile.html"><button class="action-btn primary-sm">Lihat Profil</button></a><button class="action-btn">→ Interview</button></td>
+            </tr>
+            <tr>
+              <td><span class="rank silver">🥈 2</span></td>
+              <td><div class="cand-cell"><div class="cand-avatar" style="background:linear-gradient(135deg,#10B981,#059669)">SA</div><div><span class="cand-name">Siti Aminah</span><span class="cand-email">siti.a@gmail.com</span></div></div></td>
+              <td><div class="score-bar-wrap"><div class="score-bar"><div class="score-fill" style="width:88%"></div></div><span class="score-num">88</span></div></td>
+              <td><span class="badge badge-a">⭐ Grade A</span></td>
+              <td>React, JS, Redux</td>
+              <td>3 tahun</td>
+              <td class="action-btns"><a href="08-candidate-profile.html"><button class="action-btn primary-sm">Lihat Profil</button></a><button class="action-btn">→ Interview</button></td>
+            </tr>
+            <tr>
+              <td><span class="rank bronze">🥉 3</span></td>
+              <td><div class="cand-cell"><div class="cand-avatar" style="background:linear-gradient(135deg,#06B6D4,#3B82F6)">DR</div><div><span class="cand-name">Dewi Rahayu</span><span class="cand-email">dewi.r@yahoo.com</span></div></div></td>
+              <td><div class="score-bar-wrap"><div class="score-bar"><div class="score-fill" style="width:78%"></div></div><span class="score-num">78</span></div></td>
+              <td><span class="badge badge-b">✅ Grade B</span></td>
+              <td>React, JS, CSS</td>
+              <td>3 tahun</td>
+              <td class="action-btns"><a href="08-candidate-profile.html"><button class="action-btn primary-sm">Lihat Profil</button></a><button class="action-btn">Review HR</button></td>
+            </tr>
+            <tr>
+              <td><span class="rank">4</span></td>
+              <td><div class="cand-cell"><div class="cand-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706)">MR</div><div><span class="cand-name">Muhammad Rizki</span><span class="cand-email">m.rizki@gmail.com</span></div></div></td>
+              <td><div class="score-bar-wrap"><div class="score-bar"><div class="score-fill" style="width:75%"></div></div><span class="score-num">75</span></div></td>
+              <td><span class="badge badge-b">✅ Grade B</span></td>
+              <td>React, TS, GraphQL</td>
+              <td>2 tahun</td>
+              <td class="action-btns"><a href="08-candidate-profile.html"><button class="action-btn primary-sm">Lihat Profil</button></a><button class="action-btn">Review HR</button></td>
+            </tr>
+            <tr>
+              <td><span class="rank">5</span></td>
+              <td><div class="cand-cell"><div class="cand-avatar" style="background:linear-gradient(135deg,#7C3AED,#EF4444)">YP</div><div><span class="cand-name">Yudi Pratama</span><span class="cand-email">yudi.p@hotmail.com</span></div></div></td>
+              <td><div class="score-bar-wrap"><div class="score-bar"><div class="score-fill" style="width:68%"></div></div><span class="score-num">68</span></div></td>
+              <td><span class="badge badge-c">🔶 Grade C</span></td>
+              <td>React, Vue, JS</td>
+              <td>1.5 tahun</td>
+              <td class="action-btns"><a href="08-candidate-profile.html"><button class="action-btn primary-sm">Lihat Profil</button></a><button class="action-btn" style="color:var(--danger);border-color:rgba(239,68,68,0.2);">Tolak</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

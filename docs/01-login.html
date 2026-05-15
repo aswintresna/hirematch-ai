@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --primary-hover: #4C5AB4;
+      --accent: #10B981;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-input: #1A1E35;
+      --border: rgba(255,255,255,0.08); --border-focus: rgba(92,106,196,0.6);
+      --text: #E8EAF6; --text-muted: #7B82A8;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 480px;
+    }
+    /* LEFT PANEL */
+    .left-panel {
+      background: linear-gradient(145deg, #0D0F17 0%, #131830 50%, #0a0c1a 100%);
+      display: flex; flex-direction: column;
+      padding: 60px; position: relative; overflow: hidden;
+    }
+    .left-panel::before {
+      content: '';
+      position: absolute; top: -200px; left: -100px;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(92,106,196,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .left-panel::after {
+      content: '';
+      position: absolute; bottom: -150px; right: -100px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(16,185,129,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .logo { display: flex; align-items: center; gap: 12px; margin-bottom: auto; }
+    .logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--primary), #7C3AED);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .logo-name {
+      font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800;
+      background: linear-gradient(135deg, #fff, #9ca3e8);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero-content { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 24px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 99px; padding: 6px 14px; width: fit-content;
+      font-size: 0.8rem; font-weight: 600; color: #34D399;
+    }
+    .hero-badge-dot { width: 7px; height: 7px; border-radius: 50%; background: #10B981; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.3)} }
+    .hero-title {
+      font-family: 'Outfit', sans-serif; font-size: 2.8rem; font-weight: 800;
+      line-height: 1.2; color: #fff;
+    }
+    .hero-title span { background: linear-gradient(135deg, #5C6AC4, #10B981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .hero-desc { color: var(--text-muted); font-size: 1rem; line-height: 1.7; max-width: 400px; }
+    .features { display: flex; flex-direction: column; gap: 14px; margin-top: 8px; }
+    .feature-item { display: flex; align-items: center; gap: 12px; }
+    .feature-icon {
+      width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+      background: rgba(92,106,196,0.15); border: 1px solid rgba(92,106,196,0.2);
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .feature-text { font-size: 0.9rem; color: var(--text-muted); }
+    .feature-text strong { color: var(--text); }
+    /* RIGHT PANEL */
+    .right-panel {
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 60px 48px;
+    }
+    .form-header { margin-bottom: 36px; }
+    .form-title { font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 8px; }
+    .form-subtitle { color: var(--text-muted); font-size: 0.9rem; }
+    .form-group { margin-bottom: 20px; }
+    label { display: block; font-size: 0.85rem; font-weight: 500; color: var(--text-muted); margin-bottom: 8px; }
+    input[type="text"], input[type="email"], input[type="password"] {
+      width: 100%; background: var(--bg-input); border: 1px solid var(--border);
+      border-radius: 10px; padding: 13px 16px;
+      color: var(--text); font-size: 0.95rem; font-family: 'Inter', sans-serif;
+      transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+    }
+    input:focus { border-color: var(--border-focus); box-shadow: 0 0 0 3px rgba(92,106,196,0.12); }
+    input::placeholder { color: var(--text-muted); }
+    .forgot { text-align: right; margin-top: 8px; }
+    .forgot a { font-size: 0.82rem; color: var(--primary); text-decoration: none; }
+    .forgot a:hover { color: var(--primary-hover); }
+    .btn {
+      width: 100%; padding: 14px; border-radius: 10px; border: none;
+      font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: all 0.25s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #7C3AED);
+      color: #fff; box-shadow: 0 4px 20px rgba(92,106,196,0.3);
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(92,106,196,0.4); }
+    .divider { display: flex; align-items: center; gap: 12px; margin: 24px 0; color: var(--text-muted); font-size: 0.82rem; }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+    .btn-outline {
+      background: transparent; color: var(--text); border: 1px solid var(--border);
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+    .form-footer { margin-top: 28px; text-align: center; font-size: 0.85rem; color: var(--text-muted); }
+    .form-footer a { color: var(--primary); text-decoration: none; font-weight: 500; }
+    .form-footer a:hover { text-decoration: underline; }
+    .nav-back { position: absolute; top: 24px; left: 24px; }
+    .nav-back a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; }
+    .nav-back a:hover { color: var(--text); }
+  </style>
+</head>
+<body>
+  <div class="left-panel">
+    <div class="logo">
+      <div class="logo-icon">🧠</div>
+      <span class="logo-name">HireMatch AI</span>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        AI-Powered Recruitment Platform
+      </div>
+      <h1 class="hero-title">Temukan Kandidat<br><span>Terbaik</span> Lebih Cepat</h1>
+      <p class="hero-desc">Platform HCM cerdas yang membantu HR mensortir ratusan CV secara otomatis dengan skor kesesuaian berbasis AI.</p>
+      <div class="features">
+        <div class="feature-item">
+          <div class="feature-icon">📄</div>
+          <div class="feature-text"><strong>Parsing CV otomatis</strong> — PDF, DOCX, dan gambar</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">🎯</div>
+          <div class="feature-text"><strong>AI Matching</strong> — Cocokkan kandidat dengan posisi secara presisi</div>
+        </div>
+        <div class="feature-item">
+          <div class="feature-icon">⭐</div>
+          <div class="feature-text"><strong>Skor & Rekomendasi</strong> — Grade A-D dengan breakdown kriteria</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right-panel" style="position:relative;">
+    <div class="nav-back"><a href="index.html">← Kembali ke Hub</a></div>
+    <div class="form-header">
+      <h2 class="form-title">Selamat Datang 👋</h2>
+      <p class="form-subtitle">Masuk ke akun perusahaan Anda</p>
+    </div>
+    <form>
+      <div class="form-group">
+        <label for="email">Email Perusahaan</label>
+        <input type="email" id="email" placeholder="hr@perusahaan.com" />
+      </div>
+      <div class="form-group">
+        <label for="password">Kata Sandi</label>
+        <input type="password" id="password" placeholder="••••••••" />
+        <div class="forgot"><a href="#">Lupa kata sandi?</a></div>
+      </div>
+      <a href="02-dashboard.html">
+        <button type="button" class="btn btn-primary">Masuk ke Dashboard</button>
+      </a>
+      <div class="divider">atau</div>
+      <button type="button" class="btn btn-outline">🏢 &nbsp;Masuk dengan SSO Perusahaan</button>
+    </form>
+    <div class="form-footer">
+      Belum punya akun? <a href="#">Daftar sekarang →</a>
+    </div>
+  </div>
+</body>
+</html>

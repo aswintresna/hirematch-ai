@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Pengaturan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 12px; position: sticky; top: 0; z-index: 5; }
+    .btn { padding: 8px 18px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-danger { background: rgba(239,68,68,0.1); color: var(--danger); border: 1px solid rgba(239,68,68,0.2); }
+    .content { padding: 24px 28px; display: grid; grid-template-columns: 200px 1fr; gap: 24px; align-items: start; }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 20px; }
+    .card-title { font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 18px; display: flex; align-items: center; justify-content: space-between; }
+
+    /* SETTINGS NAV */
+    .settings-nav { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 8px; }
+    .settings-nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.87rem; font-weight: 500; color: var(--text-muted); cursor: pointer; transition: all 0.2s; margin-bottom: 2px; }
+    .settings-nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+    .settings-nav-item.active { background: rgba(92,106,196,0.12); color: #818CF8; font-weight: 600; }
+
+    /* FORM */
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-size: 0.82rem; font-weight: 500; color: var(--text-muted); margin-bottom: 7px; }
+    input[type="text"], input[type="email"], textarea, select {
+      width: 100%; background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 14px; color: var(--text); font-size: 0.88rem;
+      font-family: 'Inter', sans-serif; outline: none; transition: border-color 0.2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color: rgba(92,106,196,0.5); box-shadow: 0 0 0 3px rgba(92,106,196,0.08); }
+    input::placeholder, textarea::placeholder { color: var(--text-muted); }
+    textarea { resize: vertical; min-height: 80px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .company-logo-upload { display: flex; align-items: center; gap: 16px; }
+    .logo-preview { width: 72px; height: 72px; border-radius: 14px; background: linear-gradient(135deg,#5C6AC4,#7C3AED); display: flex; align-items: center; justify-content: center; font-size: 2rem; flex-shrink: 0; }
+    .logo-upload-info { font-size: 0.82rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* TOGGLE */
+    .toggle-group { display: flex; flex-direction: column; gap: 14px; }
+    .toggle-item { display: flex; align-items: center; justify-content: space-between; padding: 14px; background: var(--bg-surface); border-radius: 10px; border: 1px solid var(--border); }
+    .toggle-info .toggle-label { font-size: 0.87rem; font-weight: 500; margin-bottom: 2px; }
+    .toggle-info .toggle-desc { font-size: 0.78rem; color: var(--text-muted); }
+    .toggle { width: 42px; height: 24px; border-radius: 99px; background: var(--bg-surface); border: 1px solid var(--border); cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
+    .toggle.on { background: var(--accent); border-color: var(--accent); }
+    .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+    .toggle.on::after { transform: translateX(18px); }
+
+    /* CRITERIA TEMPLATES */
+    .template-list { display: flex; flex-direction: column; gap: 10px; }
+    .template-item { display: flex; align-items: center; gap: 12px; padding: 14px; background: var(--bg-surface); border-radius: 12px; border: 1px solid var(--border); }
+    .template-icon { width: 38px; height: 38px; border-radius: 10px; background: rgba(92,106,196,0.12); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .template-name { font-weight: 600; font-size: 0.87rem; }
+    .template-meta { font-size: 0.75rem; color: var(--text-muted); }
+    .template-actions { margin-left: auto; display: flex; gap: 6px; }
+    .action-btn { padding: 5px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; }
+    .action-btn:hover { border-color: rgba(92,106,196,0.3); color: var(--primary); }
+
+    /* USERS TABLE */
+    table { width: 100%; border-collapse: collapse; }
+    th { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+    td { padding: 13px 14px; border-bottom: 1px solid var(--border); font-size: 0.85rem; vertical-align: middle; }
+    tr:last-child td { border-bottom: none; }
+    .user-cell { display: flex; align-items: center; gap: 10px; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+    .role-badge { padding: 3px 10px; border-radius: 6px; font-size: 0.72rem; font-weight: 600; }
+    .role-admin { background: rgba(124,58,237,0.12); color: #C4B5FD; }
+    .role-hr { background: rgba(92,106,196,0.12); color: #818CF8; }
+    .role-viewer { background: rgba(255,255,255,0.05); color: var(--text-muted); }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item active"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div class="user-name">Aswin Tresna</div><div class="user-role">HR Manager</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1;font-family:'Outfit',sans-serif;font-size:1.1rem;font-weight:700;">Pengaturan</div>
+      <button class="btn btn-primary">Simpan Perubahan</button>
+    </header>
+
+    <div class="content">
+      <!-- LEFT: SETTINGS NAV -->
+      <div>
+        <div class="settings-nav">
+          <div class="settings-nav-item active">🏢 Profil Perusahaan</div>
+          <div class="settings-nav-item">🤖 Pengaturan AI</div>
+          <div class="settings-nav-item">🎯 Template Kriteria</div>
+          <div class="settings-nav-item">👥 Manajemen User</div>
+          <div class="settings-nav-item">🔔 Notifikasi</div>
+          <div class="settings-nav-item">🔗 Integrasi</div>
+          <div class="settings-nav-item" style="color:var(--danger);margin-top:8px;border-top:1px solid var(--border);padding-top:10px;">🗑️ Hapus Data</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: CONTENT -->
+      <div>
+        <!-- COMPANY PROFILE -->
+        <div class="card">
+          <div class="card-title">🏢 Profil Perusahaan</div>
+          <div class="form-group">
+            <label>Logo Perusahaan</label>
+            <div class="company-logo-upload">
+              <div class="logo-preview">🏛️</div>
+              <div class="logo-upload-info">
+                <button class="btn btn-outline" style="font-size:0.8rem;padding:7px 14px;margin-bottom:6px;">Ganti Logo</button><br/>
+                PNG atau JPG · Maks 2MB · Disarankan 200×200px
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0">
+              <label>Nama Perusahaan</label>
+              <input type="text" value="PT Maju Bersama Indonesia" />
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label>Industri</label>
+              <select><option selected>Teknologi & IT</option><option>Manufaktur</option><option>Keuangan</option></select>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:16px;">
+            <label>Email HR Utama</label>
+            <input type="email" value="hr@majubersama.co.id" />
+          </div>
+          <div class="form-row">
+            <div class="form-group" style="margin-bottom:0">
+              <label>Kota / Lokasi</label>
+              <input type="text" value="Jakarta Selatan, DKI Jakarta" />
+            </div>
+            <div class="form-group" style="margin-bottom:0">
+              <label>Ukuran Perusahaan</label>
+              <select><option>1–50 karyawan</option><option selected>51–200 karyawan</option><option>200+ karyawan</option></select>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI SETTINGS -->
+        <div class="card">
+          <div class="card-title">🤖 Pengaturan AI & Matching</div>
+          <div class="toggle-group">
+            <div class="toggle-item">
+              <div class="toggle-info"><div class="toggle-label">Auto-matching setelah upload CV</div><div class="toggle-desc">AI langsung mencocokkan CV baru dengan semua lowongan aktif</div></div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="toggle-item">
+              <div class="toggle-info"><div class="toggle-label">Notifikasi kandidat Grade A</div><div class="toggle-desc">Kirim notifikasi email saat ada kandidat dengan Grade A ditemukan</div></div>
+              <div class="toggle on"></div>
+            </div>
+            <div class="toggle-item">
+              <div class="toggle-info"><div class="toggle-label">OCR untuk CV berbentuk gambar/scan</div><div class="toggle-desc">Aktifkan pemrosesan OCR (memerlukan waktu lebih lama)</div></div>
+              <div class="toggle"></div>
+            </div>
+            <div class="toggle-item">
+              <div class="toggle-info"><div class="toggle-label">Hard filter otomatis (reject Grade D)</div><div class="toggle-desc">Kandidat Grade D langsung ditolak tanpa masuk shortlist</div></div>
+              <div class="toggle"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CRITERIA TEMPLATES -->
+        <div class="card">
+          <div class="card-title">🎯 Template Kriteria <button class="btn btn-primary" style="font-size:0.78rem;padding:6px 14px;">+ Buat Template Baru</button></div>
+          <div class="template-list">
+            <div class="template-item">
+              <div class="template-icon">💻</div>
+              <div><div class="template-name">Senior Developer</div><div class="template-meta">5 kriteria · Terakhir dipakai: Frontend Developer</div></div>
+              <div class="template-actions"><button class="action-btn">Edit</button><button class="action-btn">Duplikat</button><button class="action-btn" style="color:var(--danger);border-color:rgba(239,68,68,0.2);">Hapus</button></div>
+            </div>
+            <div class="template-item">
+              <div class="template-icon">🌱</div>
+              <div><div class="template-name">Junior Developer</div><div class="template-meta">4 kriteria · Terakhir dipakai: Backend Developer</div></div>
+              <div class="template-actions"><button class="action-btn">Edit</button><button class="action-btn">Duplikat</button><button class="action-btn" style="color:var(--danger);border-color:rgba(239,68,68,0.2);">Hapus</button></div>
+            </div>
+            <div class="template-item">
+              <div class="template-icon">🎨</div>
+              <div><div class="template-name">Designer</div><div class="template-meta">4 kriteria · Terakhir dipakai: UI/UX Designer</div></div>
+              <div class="template-actions"><button class="action-btn">Edit</button><button class="action-btn">Duplikat</button><button class="action-btn" style="color:var(--danger);border-color:rgba(239,68,68,0.2);">Hapus</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- USERS -->
+        <div class="card">
+          <div class="card-title">👥 Manajemen User HR <button class="btn btn-outline" style="font-size:0.78rem;padding:6px 14px;">+ Undang User</button></div>
+          <table>
+            <thead><tr><th>Nama</th><th>Email</th><th>Peran</th><th>Aksi</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="user-cell"><div class="user-avatar" style="background:linear-gradient(135deg,#5C6AC4,#10B981)">AT</div><div>Aswin Tresna</div></div></td>
+                <td style="color:var(--text-muted)">aswin@majubersama.co.id</td>
+                <td><span class="role-badge role-admin">Admin</span></td>
+                <td style="color:var(--text-muted);font-size:0.8rem;">Anda</td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="user-avatar" style="background:linear-gradient(135deg,#7C3AED,#EC4899)">RA</div><div>Rina Astuti</div></div></td>
+                <td style="color:var(--text-muted)">rina@majubersama.co.id</td>
+                <td><span class="role-badge role-hr">HR Manager</span></td>
+                <td><button class="action-btn">Edit</button></td>
+              </tr>
+              <tr>
+                <td><div class="user-cell"><div class="user-avatar" style="background:linear-gradient(135deg,#06B6D4,#3B82F6)">DP</div><div>Doni Prasetyo</div></div></td>
+                <td style="color:var(--text-muted)">doni@majubersama.co.id</td>
+                <td><span class="role-badge role-viewer">Viewer</span></td>
+                <td><button class="action-btn">Edit</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

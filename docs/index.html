@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Mockup Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4;
+      --primary-light: #7986D8;
+      --accent: #10B981;
+      --accent-glow: rgba(16,185,129,0.2);
+      --bg: #0D0F17;
+      --bg-card: #13162A;
+      --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.08);
+      --text: #E8EAF6;
+      --text-muted: #7B82A8;
+      --danger: #EF4444;
+      --warning: #F59E0B;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 60px 20px;
+    }
+    .container { max-width: 960px; margin: 0 auto; }
+    .logo { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+    .logo-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, var(--primary), #7C3AED);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px;
+    }
+    h1 { font-family: 'Outfit', sans-serif; font-size: 2.2rem; font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, var(--primary-light) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .subtitle { color: var(--text-muted); margin-bottom: 48px; font-size: 1rem; }
+    .badge {
+      display: inline-block; padding: 3px 10px; border-radius: 99px; font-size: 0.72rem;
+      font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 20px;
+      background: rgba(92,106,196,0.18); color: var(--primary-light); border: 1px solid rgba(92,106,196,0.3);
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 600;
+      color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; margin-bottom: 40px; }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.25s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--primary) 0%, transparent 60%);
+      opacity: 0; transition: opacity 0.3s;
+      border-radius: inherit;
+    }
+    .card:hover { transform: translateY(-4px); border-color: rgba(92,106,196,0.4); box-shadow: 0 12px 40px rgba(92,106,196,0.15); }
+    .card:hover::before { opacity: 0.05; }
+    .card-icon { font-size: 2rem; margin-bottom: 14px; display: block; }
+    .card-title { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
+    .card-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+    .card-status {
+      display: inline-flex; align-items: center; gap: 5px; margin-top: 14px;
+      font-size: 0.75rem; font-weight: 600; padding: 3px 10px;
+      border-radius: 99px;
+    }
+    .status-ready { background: rgba(16,185,129,0.15); color: #34D399; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    footer { margin-top: 60px; text-align: center; color: var(--text-muted); font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">
+      <div class="logo-icon">🧠</div>
+      <div>
+        <h1>HireMatch AI</h1>
+      </div>
+    </div>
+    <p class="subtitle">HCM/HRD Platform — CV Parsing & Job Matching · Mockup Navigation Hub</p>
+    <div class="badge">Phase 1 — UI Mockups</div>
+
+    <p class="section-title">Auth & Onboarding</p>
+    <div class="grid">
+      <a href="01-login.html" class="card">
+        <span class="card-icon">🔐</span>
+        <div class="card-title">01. Login</div>
+        <div class="card-desc">Halaman masuk untuk akun perusahaan & HR manager.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+    </div>
+
+    <p class="section-title">Kandidat & Rekrutmen</p>
+    <div class="grid">
+      <a href="11-candidates.html" class="card">
+        <span class="card-icon">👥</span>
+        <div class="card-title">11. Daftar Kandidat</div>
+        <div class="card-desc">Semua kandidat dari berbagai posisi, filter by grade, status, dan posisi.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+      <a href="12-matching.html" class="card">
+        <span class="card-icon">🤖</span>
+        <div class="card-title">12. AI Matching Center</div>
+        <div class="card-desc">Jalankan matching otomatis atau manual antara kandidat dan lowongan.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+    </div>
+
+    <p class="section-title">Core Application</p>
+    <div class="grid">
+      <a href="02-dashboard.html" class="card">
+        <span class="card-icon">📊</span>
+        <div class="card-title">02. Dashboard</div>
+        <div class="card-desc">Overview rekrutmen: statistik, aktivitas, dan pipeline kandidat.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+      <a href="03-upload-cv.html" class="card">
+        <span class="card-icon">📤</span>
+        <div class="card-title">03. Upload CV</div>
+        <div class="card-desc">Zone upload single/batch CV dengan progress parsing otomatis.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+      <a href="04-cv-analysis.html" class="card">
+        <span class="card-icon">🔍</span>
+        <div class="card-title">04. Hasil Analisis CV</div>
+        <div class="card-desc">Tampilan data CV yang sudah di-parse: skill, pengalaman, pendidikan.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+      <a href="05-job-list.html" class="card">
+        <span class="card-icon">💼</span>
+        <div class="card-title">05. Daftar Lowongan</div>
+        <div class="card-desc">Kelola semua posisi yang sedang dibuka di perusahaan.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+      <a href="06-job-create.html" class="card">
+        <span class="card-icon">➕</span>
+        <div class="card-title">06. Buat Lowongan</div>
+        <div class="card-desc">Form buat posisi baru lengkap dengan Criteria Builder interaktif.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+      <a href="07-job-detail.html" class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">07. Detail Lowongan</div>
+        <div class="card-desc">Shortlist kandidat, ranking skor, filter & sort hasil matching.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+      <a href="08-candidate-profile.html" class="card">
+        <span class="card-icon">👤</span>
+        <div class="card-title">08. Profil Kandidat</div>
+        <div class="card-desc">Detail kandidat lengkap dengan score breakdown & rekomendasi AI.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+      <a href="09-reports.html" class="card">
+        <span class="card-icon">📈</span>
+        <div class="card-title">09. Laporan</div>
+        <div class="card-desc">Analitik rekrutmen, chart pipeline, dan export PDF/Excel.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+      <a href="10-settings.html" class="card">
+        <span class="card-icon">⚙️</span>
+        <div class="card-title">10. Pengaturan</div>
+        <div class="card-desc">Profil perusahaan, template kriteria, dan manajemen user HR.</div>
+        <span class="card-status status-ready"><span class="dot"></span> Ready</span>
+      </a>
+    </div>
+
+    <footer>HireMatch AI · Mockup v1.0 · Built with ❤️ by Antigravity</footer>
+  </div>
+</body>
+</html>

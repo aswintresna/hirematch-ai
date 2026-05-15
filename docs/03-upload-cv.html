@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Upload CV</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar {
+      width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10;
+    }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 16px; position: sticky; top: 0; z-index: 5; }
+    .topbar-title { font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 700; flex: 1; }
+    .breadcrumb { font-size: 0.82rem; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    .breadcrumb a { color: var(--text-muted); text-decoration: none; } .breadcrumb a:hover { color: var(--text); }
+    .breadcrumb span { color: var(--text); }
+    .content { padding: 28px; }
+    .page-header { margin-bottom: 28px; }
+    .page-title { font-family: 'Outfit', sans-serif; font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
+    .page-desc { color: var(--text-muted); font-size: 0.9rem; }
+
+    /* TABS */
+    .tabs { display: flex; gap: 4px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 4px; width: fit-content; margin-bottom: 28px; }
+    .tab { padding: 8px 20px; border-radius: 8px; font-size: 0.85rem; font-weight: 500; cursor: pointer; color: var(--text-muted); transition: all 0.2s; }
+    .tab.active { background: var(--primary); color: #fff; font-weight: 600; }
+    .tab:hover:not(.active) { background: rgba(255,255,255,0.05); color: var(--text); }
+
+    /* UPLOAD AREA */
+    .upload-section { display: grid; grid-template-columns: 1fr 360px; gap: 24px; margin-bottom: 28px; }
+    .upload-zone {
+      background: var(--bg-card); border: 2px dashed rgba(92,106,196,0.35);
+      border-radius: 20px; padding: 60px 40px; text-align: center;
+      cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .upload-zone:hover { border-color: var(--primary); background: rgba(92,106,196,0.05); }
+    .upload-zone.drag-over { border-color: var(--accent); background: rgba(16,185,129,0.05); }
+    .upload-icon { font-size: 4rem; margin-bottom: 16px; display: block; }
+    .upload-title { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 8px; }
+    .upload-desc { color: var(--text-muted); font-size: 0.88rem; line-height: 1.6; margin-bottom: 24px; }
+    .upload-formats { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 24px; }
+    .format-badge { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; font-size: 0.78rem; font-weight: 600; color: var(--text-muted); }
+    .btn { padding: 12px 28px; border-radius: 10px; border: none; font-family: 'Inter', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: all 0.25s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; box-shadow: 0 4px 16px rgba(92,106,196,0.3); }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(92,106,196,0.4); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+
+    /* RIGHT SIDE PANEL */
+    .side-panel { display: flex; flex-direction: column; gap: 16px; }
+    .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 20px; }
+    .card-title { font-family: 'Outfit', sans-serif; font-size: 0.95rem; font-weight: 700; margin-bottom: 14px; }
+    .job-selector label { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 8px; display: block; }
+    select {
+      width: 100%; background: var(--bg-surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; color: var(--text); font-size: 0.88rem;
+      font-family: 'Inter', sans-serif; outline: none; cursor: pointer; margin-bottom: 12px;
+    }
+    .tip { display: flex; gap: 10px; padding: 12px; background: rgba(92,106,196,0.08); border: 1px solid rgba(92,106,196,0.15); border-radius: 10px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; }
+    .tip-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+
+    /* QUEUE */
+    .queue-list { display: flex; flex-direction: column; gap: 10px; }
+    .queue-item { display: flex; align-items: center; gap: 12px; padding: 12px; background: var(--bg-surface); border-radius: 10px; border: 1px solid var(--border); }
+    .queue-icon { font-size: 1.5rem; flex-shrink: 0; }
+    .queue-info { flex: 1; min-width: 0; }
+    .queue-name { font-size: 0.85rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .queue-size { font-size: 0.75rem; color: var(--text-muted); }
+    .queue-progress { height: 4px; border-radius: 99px; background: var(--bg-card); margin-top: 6px; overflow: hidden; }
+    .queue-fill { height: 100%; border-radius: 99px; transition: width 0.3s; }
+    .fill-done { background: linear-gradient(90deg, var(--accent), #059669); }
+    .fill-progress { background: linear-gradient(90deg, var(--primary), #7C3AED); animation: indeterminate 1.5s infinite; }
+    @keyframes indeterminate { 0%{background-position:-200% 0} 100%{background-position:200% 0} }
+    .queue-status { font-size: 0.75rem; font-weight: 600; flex-shrink: 0; }
+    .status-done { color: var(--accent); }
+    .status-parsing { color: var(--primary); }
+    .status-waiting { color: var(--text-muted); }
+    .status-error { color: var(--danger); }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🧠</div>
+      <span class="logo-name">HireMatch AI</span>
+    </div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item active"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="avatar">AT</div>
+        <div><div class="user-name">Aswin Tresna</div><div class="user-role">HR Manager</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1;">
+        <div class="topbar-title">Upload CV</div>
+        <div class="breadcrumb"><a href="02-dashboard.html">Dashboard</a> / <span>Upload CV</span></div>
+      </div>
+    </header>
+
+    <div class="content">
+      <div class="page-header">
+        <h1 class="page-title">Upload CV Pelamar 📤</h1>
+        <p class="page-desc">Upload satu atau beberapa CV sekaligus. AI akan mem-parsing dan menganalisis secara otomatis.</p>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active">Upload Satu</div>
+        <div class="tab">Upload Massal</div>
+        <div class="tab">Dari URL / Email</div>
+      </div>
+
+      <div class="upload-section">
+        <!-- UPLOAD ZONE -->
+        <div>
+          <div class="upload-zone">
+            <span class="upload-icon">📂</span>
+            <h2 class="upload-title">Drag & Drop File CV</h2>
+            <p class="upload-desc">Seret file CV ke sini, atau klik untuk memilih file dari komputer Anda</p>
+            <div class="upload-formats">
+              <span class="format-badge">📄 PDF</span>
+              <span class="format-badge">📝 DOCX</span>
+              <span class="format-badge">🖼️ JPG/PNG</span>
+              <span class="format-badge">📋 DOC</span>
+            </div>
+            <button class="btn btn-primary">Pilih File</button>
+          </div>
+
+          <!-- QUEUE -->
+          <div style="margin-top:20px;">
+            <div class="card">
+              <div class="card-title">Antrean Upload (4 file)</div>
+              <div class="queue-list">
+                <div class="queue-item">
+                  <div class="queue-icon">📄</div>
+                  <div class="queue-info">
+                    <div class="queue-name">Budi_Santoso_CV.pdf</div>
+                    <div class="queue-size">243 KB</div>
+                    <div class="queue-progress"><div class="queue-fill fill-done" style="width:100%"></div></div>
+                  </div>
+                  <div class="queue-status status-done">✅ Selesai</div>
+                </div>
+                <div class="queue-item">
+                  <div class="queue-icon">📝</div>
+                  <div class="queue-info">
+                    <div class="queue-name">Dewi_Rahayu_Resume.docx</div>
+                    <div class="queue-size">187 KB</div>
+                    <div class="queue-progress"><div class="queue-fill fill-progress" style="width:65%"></div></div>
+                  </div>
+                  <div class="queue-status status-parsing">⏳ Parsing...</div>
+                </div>
+                <div class="queue-item">
+                  <div class="queue-icon">🖼️</div>
+                  <div class="queue-info">
+                    <div class="queue-name">Ahmad_CV_scan.jpg</div>
+                    <div class="queue-size">1.2 MB</div>
+                    <div class="queue-progress"><div class="queue-fill" style="width:0%;background:var(--border)"></div></div>
+                  </div>
+                  <div class="queue-status status-waiting">⏸ Menunggu</div>
+                </div>
+                <div class="queue-item">
+                  <div class="queue-icon">📄</div>
+                  <div class="queue-info">
+                    <div class="queue-name">Siti_Aminah_Backend.pdf</div>
+                    <div class="queue-size">312 KB</div>
+                    <div class="queue-progress"><div class="queue-fill" style="width:0%;background:var(--border)"></div></div>
+                  </div>
+                  <div class="queue-status status-waiting">⏸ Menunggu</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIDE PANEL -->
+        <div class="side-panel">
+          <div class="card job-selector">
+            <div class="card-title">🎯 Tujuan Posisi</div>
+            <label>Pilih posisi lowongan untuk dicocokkan:</label>
+            <select>
+              <option>Frontend Developer (React) — 5 posisi</option>
+              <option>Backend Developer (Node.js)</option>
+              <option>Product Manager</option>
+              <option>Data Analyst</option>
+              <option>UI/UX Designer</option>
+            </select>
+            <div class="tip">
+              <span class="tip-icon">💡</span>
+              Memilih posisi akan membantu AI mencocokan CV secara spesifik dengan kriteria lowongan tersebut.
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title">⚙️ Pengaturan Parsing</div>
+            <div style="display:flex;flex-direction:column;gap:12px;">
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;color:var(--text);">
+                <input type="checkbox" checked style="accent-color:var(--primary);width:15px;height:15px;" />
+                Ekstrak skills otomatis
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;color:var(--text);">
+                <input type="checkbox" checked style="accent-color:var(--primary);width:15px;height:15px;" />
+                Deteksi pengalaman kerja
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;color:var(--text);">
+                <input type="checkbox" checked style="accent-color:var(--primary);width:15px;height:15px;" />
+                Ambil data pendidikan
+              </label>
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:0.85rem;color:var(--text);">
+                <input type="checkbox" style="accent-color:var(--primary);width:15px;height:15px;" />
+                OCR untuk gambar/scan
+              </label>
+            </div>
+          </div>
+
+          <div class="card" style="background:rgba(16,185,129,0.07);border-color:rgba(16,185,129,0.2);">
+            <div class="card-title" style="color:#34D399;">📊 Progres Hari Ini</div>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:0.85rem;">
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted)">CV diupload</span><strong>12</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted)">Berhasil diparse</span><strong>10</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted)">Gagal / Error</span><strong style="color:var(--danger)">2</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted)">Rata-rata waktu</span><strong>~8 detik</strong></div>
+            </div>
+          </div>
+
+          <a href="04-cv-analysis.html">
+            <button class="btn btn-primary" style="width:100%;padding:14px;">Lihat Hasil Analisis →</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

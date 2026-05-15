@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HireMatch AI — Daftar Kandidat</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --primary: #5C6AC4; --accent: #10B981; --warning: #F59E0B; --danger: #EF4444;
+      --bg: #0D0F17; --bg-card: #13162A; --bg-surface: #1A1E35;
+      --border: rgba(255,255,255,0.07); --text: #E8EAF6; --text-muted: #7B82A8;
+      --sidebar-w: 240px;
+    }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; }
+    .sidebar { width: var(--sidebar-w); background: var(--bg-card); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 24px 0; position: fixed; height: 100vh; z-index: 10; }
+    .sidebar-logo { display: flex; align-items: center; gap: 10px; padding: 0 20px 28px; border-bottom: 1px solid var(--border); }
+    .logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--primary), #7C3AED); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+    .logo-name { font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 700; }
+    .nav { flex: 1; padding: 16px 12px; display: flex; flex-direction: column; gap: 4px; }
+    .nav-section { font-size: 0.7rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 8px 6px; }
+    .nav-item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 10px; font-size: 0.88rem; font-weight: 500; color: var(--text-muted); cursor: pointer; text-decoration: none; transition: all 0.2s; }
+    .nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text); }
+    .nav-item.active { background: rgba(92,106,196,0.15); color: #fff; font-weight: 600; }
+    .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--primary); color: #fff; border-radius: 99px; padding: 1px 8px; font-size: 0.7rem; font-weight: 700; }
+    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, #5C6AC4, #10B981); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-name { font-size: 0.85rem; font-weight: 600; }
+    .user-role { font-size: 0.75rem; color: var(--text-muted); }
+    .main { margin-left: var(--sidebar-w); flex: 1; display: flex; flex-direction: column; }
+    .topbar { height: 64px; background: var(--bg-card); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 28px; gap: 12px; position: sticky; top: 0; z-index: 5; }
+    .btn { padding: 8px 18px; border-radius: 8px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; font-family: 'Inter', sans-serif; transition: all 0.2s; }
+    .btn-primary { background: linear-gradient(135deg, var(--primary), #7C3AED); color: #fff; box-shadow: 0 4px 16px rgba(92,106,196,0.25); }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-outline { background: transparent; color: var(--text); border: 1px solid var(--border); }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.2); }
+    .content { padding: 28px; }
+    .page-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 22px; }
+    .page-title { font-family: 'Outfit', sans-serif; font-size: 1.5rem; font-weight: 800; }
+    .page-desc { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; }
+
+    /* SUMMARY CHIPS */
+    .summary-row { display: flex; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
+    .summary-chip { display: flex; align-items: center; gap: 8px; padding: 10px 16px; border-radius: 12px; background: var(--bg-card); border: 1px solid var(--border); font-size: 0.85rem; }
+    .chip-val { font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 800; margin-right: 2px; }
+    .chip-label { color: var(--text-muted); }
+    .chip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* TOOLBAR */
+    .toolbar { display: flex; gap: 10px; margin-bottom: 18px; align-items: center; flex-wrap: wrap; }
+    .search-box { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 9px 14px; flex: 1; min-width: 220px; max-width: 340px; }
+    .search-box span { font-size: 0.85rem; color: var(--text-muted); }
+    select { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: 9px 13px; color: var(--text); font-size: 0.82rem; font-family: 'Inter', sans-serif; outline: none; cursor: pointer; }
+    .grade-filters { display: flex; gap: 6px; margin-left: auto; }
+    .gf { padding: 6px 13px; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-muted); transition: all 0.2s; }
+    .gf.a { background: rgba(16,185,129,0.1); color: #34D399; border-color: rgba(16,185,129,0.2); }
+    .gf.b { background: rgba(92,106,196,0.1); color: #818CF8; border-color: rgba(92,106,196,0.2); }
+    .gf.c { background: rgba(245,158,11,0.1); color: #FCD34D; border-color: rgba(245,158,11,0.2); }
+    .gf.d { background: rgba(239,68,68,0.08); color: #FCA5A5; border-color: rgba(239,68,68,0.15); }
+
+    /* CANDIDATE CARDS GRID */
+    .candidates-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
+    .cand-card {
+      background: var(--bg-card); border: 1px solid var(--border); border-radius: 18px;
+      padding: 20px; text-decoration: none; color: inherit; display: block;
+      transition: all 0.25s; position: relative; overflow: hidden;
+    }
+    .cand-card:hover { transform: translateY(-3px); border-color: rgba(92,106,196,0.3); box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
+    .cand-card-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 14px; }
+    .cand-avatar { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; flex-shrink: 0; font-family: 'Outfit', sans-serif; }
+    .cand-info { flex: 1; min-width: 0; }
+    .cand-name { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 2px; }
+    .cand-role { font-size: 0.8rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .grade-pill { padding: 4px 12px; border-radius: 99px; font-size: 0.74rem; font-weight: 700; flex-shrink: 0; }
+    .grade-a { background: rgba(16,185,129,0.12); color: #34D399; border: 1px solid rgba(16,185,129,0.2); }
+    .grade-b { background: rgba(92,106,196,0.12); color: #818CF8; border: 1px solid rgba(92,106,196,0.2); }
+    .grade-c { background: rgba(245,158,11,0.1); color: #FCD34D; border: 1px solid rgba(245,158,11,0.2); }
+    .grade-d { background: rgba(239,68,68,0.08); color: #FCA5A5; border: 1px solid rgba(239,68,68,0.15); }
+    .score-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .score-bar { flex: 1; height: 6px; border-radius: 99px; background: var(--bg-surface); overflow: hidden; }
+    .score-fill { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--primary), var(--accent)); }
+    .score-num { font-weight: 700; font-size: 0.85rem; flex-shrink: 0; min-width: 32px; text-align: right; }
+    .cand-meta { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .meta-row { display: flex; align-items: center; gap: 7px; font-size: 0.78rem; color: var(--text-muted); }
+    .skills-mini { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px; }
+    .skill-mini { padding: 2px 9px; border-radius: 99px; font-size: 0.72rem; font-weight: 600; background: rgba(92,106,196,0.1); border: 1px solid rgba(92,106,196,0.18); color: #818CF8; }
+    .skill-mini.match { background: rgba(16,185,129,0.1); border-color: rgba(16,185,129,0.18); color: #34D399; }
+    .cand-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid var(--border); }
+    .stage-badge { padding: 4px 10px; border-radius: 6px; font-size: 0.74rem; font-weight: 600; }
+    .stage-shortlist { background: rgba(92,106,196,0.1); color: #818CF8; }
+    .stage-review { background: rgba(245,158,11,0.1); color: #FCD34D; }
+    .stage-interview { background: rgba(16,185,129,0.1); color: #34D399; }
+    .stage-rejected { background: rgba(239,68,68,0.08); color: #FCA5A5; }
+    .view-link { font-size: 0.78rem; font-weight: 600; color: var(--primary); }
+
+    /* VIEW TOGGLE */
+    .view-toggle { display: flex; gap: 4px; }
+    .view-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--border); background: transparent; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 14px; transition: all 0.2s; }
+    .view-btn.active { background: rgba(92,106,196,0.15); border-color: rgba(92,106,196,0.3); color: #818CF8; }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">🧠</div><span class="logo-name">HireMatch AI</span></div>
+    <nav class="nav">
+      <div class="nav-section">Menu Utama</div>
+      <a href="02-dashboard.html" class="nav-item"><span class="icon">📊</span> Dashboard</a>
+      <a href="03-upload-cv.html" class="nav-item"><span class="icon">📤</span> Upload CV</a>
+      <a href="11-candidates.html" class="nav-item active"><span class="icon">👥</span> Kandidat <span class="nav-badge">24</span></a>
+      <div class="nav-section">Rekrutmen</div>
+      <a href="05-job-list.html" class="nav-item"><span class="icon">💼</span> Lowongan</a>
+      <a href="12-matching.html" class="nav-item"><span class="icon">🎯</span> Matching</a>
+      <a href="09-reports.html" class="nav-item"><span class="icon">📈</span> Laporan</a>
+      <div class="nav-section">Sistem</div>
+      <a href="10-settings.html" class="nav-item"><span class="icon">⚙️</span> Pengaturan</a>
+    </nav>
+    <div class="sidebar-footer"><div class="user-info"><div class="avatar">AT</div><div><div class="user-name">Aswin Tresna</div><div class="user-role">HR Manager</div></div></div></div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <div style="flex:1; font-family:'Outfit',sans-serif; font-size:1.1rem; font-weight:700;">Daftar Kandidat</div>
+      <div class="view-toggle">
+        <button class="view-btn active" title="Grid">⊞</button>
+        <button class="view-btn" title="Tabel">☰</button>
+      </div>
+      <a href="03-upload-cv.html"><button class="btn btn-primary">+ Upload CV Baru</button></a>
+    </header>
+
+    <div class="content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Semua Kandidat 👥</h1>
+          <p class="page-desc">24 kandidat aktif dari 72 total pelamar masuk</p>
+        </div>
+      </div>
+
+      <!-- SUMMARY CHIPS -->
+      <div class="summary-row">
+        <div class="summary-chip"><div class="chip-dot" style="background:#10B981"></div><span class="chip-val" style="color:#34D399">5</span><span class="chip-label">Grade A</span></div>
+        <div class="summary-chip"><div class="chip-dot" style="background:#5C6AC4"></div><span class="chip-val" style="color:#818CF8">8</span><span class="chip-label">Grade B</span></div>
+        <div class="summary-chip"><div class="chip-dot" style="background:#F59E0B"></div><span class="chip-val" style="color:#FCD34D">7</span><span class="chip-label">Grade C</span></div>
+        <div class="summary-chip"><div class="chip-dot" style="background:#EF4444"></div><span class="chip-val" style="color:#FCA5A5">4</span><span class="chip-label">Grade D</span></div>
+        <div class="summary-chip" style="margin-left:auto;"><span class="chip-val">3</span><span class="chip-label">Menuju Interview</span></div>
+      </div>
+
+      <!-- TOOLBAR -->
+      <div class="toolbar">
+        <div class="search-box"><span>🔍</span><span>Cari nama, email, atau skill...</span></div>
+        <select><option>Semua Posisi</option><option>Frontend Developer</option><option>Backend Developer</option><option>Data Analyst</option><option>UI/UX Designer</option></select>
+        <select><option>Semua Status</option><option>Shortlist AI</option><option>Review HR</option><option>Interview</option><option>Ditolak</option></select>
+        <select><option>Urutkan: Skor Tertinggi</option><option>Terbaru</option><option>Nama A-Z</option></select>
+        <div class="grade-filters">
+          <div class="gf a">⭐ A</div>
+          <div class="gf b">✅ B</div>
+          <div class="gf c">🔶 C</div>
+          <div class="gf d">❌ D</div>
+        </div>
+      </div>
+
+      <!-- CANDIDATE CARDS -->
+      <div class="candidates-grid">
+
+        <!-- Card 1 -->
+        <a href="08-candidate-profile.html" class="cand-card">
+          <div class="cand-card-header">
+            <div class="cand-avatar" style="background:linear-gradient(135deg,#5C6AC4,#7C3AED)">BS</div>
+            <div class="cand-info">
+              <div class="cand-name">Budi Santoso</div>
+              <div class="cand-role">Frontend Developer · 4 thn</div>
+            </div>
+            <span class="grade-pill grade-a">⭐ A</span>
+          </div>
+          <div class="score-row">
+            <div class="score-bar"><div class="score-fill" style="width:92%"></div></div>
+            <span class="score-num">92</span>
+          </div>
+          <div class="cand-meta">
+            <div class="meta-row">💼 Frontend Developer (React)</div>
+            <div class="meta-row">📍 Jakarta Selatan</div>
+          </div>
+          <div class="skills-mini">
+            <span class="skill-mini match">React.js</span>
+            <span class="skill-mini match">TypeScript</span>
+            <span class="skill-mini match">Figma</span>
+            <span class="skill-mini">Git</span>
+          </div>
+          <div class="cand-footer">
+            <span class="stage-badge stage-review">Review HR</span>
+            <span class="view-link">Lihat profil →</span>
+          </div>
+        </a>
+
+        <!-- Card 2 -->
+        <a href="08-candidate-profile.html" class="cand-card">
+          <div class="cand-card-header">
+            <div class="cand-avatar" style="background:linear-gradient(135deg,#10B981,#059669)">SA</div>
+            <div class="cand-info">
+              <div class="cand-name">Siti Aminah</div>
+              <div class="cand-role">Backend Developer · 3 thn</div>
+            </div>
+            <span class="grade-pill grade-a">⭐ A</span>
+          </div>
+          <div class="score-row">
+            <div class="score-bar"><div class="score-fill" style="width:88%"></div></div>
+            <span class="score-num">88</span>
+          </div>
+          <div class="cand-meta">
+            <div class="meta-row">💼 Backend Developer (Node.js)</div>
+            <div class="meta-row">📍 Jakarta Timur</div>
+          </div>
+          <div class="skills-mini">
+            <span class="skill-mini match">Node.js</span>
+            <span class="skill-mini match">PostgreSQL</span>
+            <span class="skill-mini match">Docker</span>
+            <span class="skill-mini">AWS</span>
+          </div>
+          <div class="cand-footer">
+            <span class="stage-badge stage-interview">Interview</span>
+            <span class="view-link">Lihat profil →</span>
+          </div>
+        </a>
+
+        <!-- Card 3 -->
+        <a href="08-candidate-profile.html" class="cand-card">
+          <div class="cand-card-header">
+            <div class="cand-avatar" style="background:linear-gradient(135deg,#06B6D4,#3B82F6)">DR</div>
+            <div class="cand-info">
+              <div class="cand-name">Dewi Rahayu</div>
+              <div class="cand-role">Product Manager · 3 thn</div>
+            </div>
+            <span class="grade-pill grade-b">✅ B</span>
+          </div>
+          <div class="score-row">
+            <div class="score-bar"><div class="score-fill" style="width:78%"></div></div>
+            <span class="score-num">78</span>
+          </div>
+          <div class="cand-meta">
+            <div class="meta-row">💼 Product Manager</div>
+            <div class="meta-row">📍 Bekasi, Jawa Barat</div>
+          </div>
+          <div class="skills-mini">
+            <span class="skill-mini match">Product Strategy</span>
+            <span class="skill-mini match">Agile/Scrum</span>
+            <span class="skill-mini">Figma</span>
+          </div>
+          <div class="cand-footer">
+            <span class="stage-badge stage-shortlist">Shortlist AI</span>
+            <span class="view-link">Lihat profil →</span>
+          </div>
+        </a>
+
+        <!-- Card 4 -->
+        <a href="08-candidate-profile.html" class="cand-card">
+          <div class="cand-card-header">
+            <div class="cand-avatar" style="background:linear-gradient(135deg,#F59E0B,#D97706)">AF</div>
+            <div class="cand-info">
+              <div class="cand-name">Ahmad Fauzi</div>
+              <div class="cand-role">Data Analyst · 2 thn</div>
+            </div>
+            <span class="grade-pill grade-c">🔶 C</span>
+          </div>
+          <div class="score-row">
+            <div class="score-bar"><div class="score-fill" style="width:65%"></div></div>
+            <span class="score-num">65</span>
+          </div>
+          <div class="cand-meta">
+            <div class="meta-row">💼 Data Analyst</div>
+            <div class="meta-row">📍 Bandung, Jawa Barat</div>
+          </div>
+          <div class="skills-mini">
+            <span class="skill-mini match">Python</span>
+            <span class="skill-mini match">SQL</span>
+            <span class="skill-mini">Tableau</span>
+            <span class="skill-mini">Power BI</span>
+          </div>
+          <div class="cand-footer">
+            <span class="stage-badge stage-shortlist">Shortlist AI</span>
+            <span class="view-link">Lihat profil →</span>
+          </div>
+        </a>
+
+        <!-- Card 5 -->
+        <a href="08-candidate-profile.html" class="cand-card">
+          <div class="cand-card-header">
+            <div class="cand-avatar" style="background:linear-gradient(135deg,#7C3AED,#EC4899)">RH</div>
+            <div class="cand-info">
+              <div class="cand-name">Rudi Hermawan</div>
+              <div class="cand-role">UI/UX Designer · 1.5 thn</div>
+            </div>
+            <span class="grade-pill grade-d">❌ D</span>
+          </div>
+          <div class="score-row">
+            <div class="score-bar"><div class="score-fill" style="width:42%"></div></div>
+            <span class="score-num">42</span>
+          </div>
+          <div class="cand-meta">
+            <div class="meta-row">💼 UI/UX Designer</div>
+            <div class="meta-row">📍 Surabaya, Jawa Timur</div>
+          </div>
+          <div class="skills-mini">
+            <span class="skill-mini">Figma</span>
+            <span class="skill-mini">Canva</span>
+          </div>
+          <div class="cand-footer">
+            <span class="stage-badge stage-rejected">Tidak Lolos</span>
+            <span class="view-link">Lihat profil →</span>
+          </div>
+        </a>
+
+        <!-- Card 6 -->
+        <a href="08-candidate-profile.html" class="cand-card">
+          <div class="cand-card-header">
+            <div class="cand-avatar" style="background:linear-gradient(135deg,#5C6AC4,#10B981)">MR</div>
+            <div class="cand-info">
+              <div class="cand-name">Muhammad Rizki</div>
+              <div class="cand-role">Frontend Developer · 2 thn</div>
+            </div>
+            <span class="grade-pill grade-b">✅ B</span>
+          </div>
+          <div class="score-row">
+            <div class="score-bar"><div class="score-fill" style="width:75%"></div></div>
+            <span class="score-num">75</span>
+          </div>
+          <div class="cand-meta">
+            <div class="meta-row">💼 Frontend Developer (React)</div>
+            <div class="meta-row">📍 Tangerang, Banten</div>
+          </div>
+          <div class="skills-mini">
+            <span class="skill-mini match">React.js</span>
+            <span class="skill-mini match">TypeScript</span>
+            <span class="skill-mini">GraphQL</span>
+          </div>
+          <div class="cand-footer">
+            <span class="stage-badge stage-review">Review HR</span>
+            <span class="view-link">Lihat profil →</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </div>
+</body>
+</html>
